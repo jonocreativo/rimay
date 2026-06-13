@@ -349,4 +349,14 @@ document.addEventListener('DOMContentLoaded', () => {
       addBotMessage(thanksText);
     }, 1500);
   };
+
+  // --- MAIN RESERVATION FORM SUBMISSION ---
+  window.submitMainReservaForm = function(form) {
+    const formBox = form.closest('.reserva-form-box');
+    const successMsg = formBox ? formBox.querySelector('#reserva-success-message') : null;
+    if (form && successMsg) {
+      form.style.display = 'none';
+      successMsg.style.display = 'block';
+    }
+  };
 });
