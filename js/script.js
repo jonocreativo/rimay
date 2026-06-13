@@ -139,4 +139,17 @@ document.addEventListener('DOMContentLoaded', () => {
   if (slides.length > 0) {
     startTimer();
   }
+
+  // --- VIAJES SECTION SLIDER ---
+  const viajesSlides = document.querySelectorAll('.viajes-slide');
+  let currentViajesSlide = 0;
+  const viajesSlideDuration = 4000; // 4 seconds
+
+  if (viajesSlides.length > 1) {
+    setInterval(() => {
+      viajesSlides[currentViajesSlide].classList.remove('active');
+      currentViajesSlide = (currentViajesSlide + 1) % viajesSlides.length;
+      viajesSlides[currentViajesSlide].classList.add('active');
+    }, viajesSlideDuration);
+  }
 });
