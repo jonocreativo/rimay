@@ -634,11 +634,14 @@
       
       <div class="chat-quick-options" id="chat-quick-options">
         <button class="quick-opt-btn reserve-main-btn" data-question="reservar">📅 Reservar o Cotizar Viaje</button>
-        <div class="chat-chips-slider">
-          <button class="quick-opt-btn chip-btn" data-question="quien">¿Quién es Mónica?</button>
-          <button class="quick-opt-btn chip-btn" data-question="significado">¿Qué significa Rimay?</button>
-          <button class="quick-opt-btn chip-btn" data-question="pilares">¿Cuáles son los pilares?</button>
-          <button class="quick-opt-btn chip-btn" data-question="viajes">¿Qué destinos ofrecen?</button>
+        <div class="chat-chips-container">
+          <button class="slider-arrow arrow-left" id="chip-arrow-left" aria-label="Desplazar a la izquierda">&lt;</button>
+          <div class="chat-chips-slider" id="chat-chips-slider">
+            <button class="quick-opt-btn chip-btn" data-question="significado">¿Qué significa Rimay?</button>
+            <button class="quick-opt-btn chip-btn" data-question="pilares">¿Cuáles son los pilares?</button>
+            <button class="quick-opt-btn chip-btn" data-question="viajes">¿Qué destinos ofrecen?</button>
+          </div>
+          <button class="slider-arrow arrow-right" id="chip-arrow-right" aria-label="Desplazar a la derecha">&gt;</button>
         </div>
       </div>
 

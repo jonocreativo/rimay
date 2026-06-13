@@ -1667,7 +1667,7 @@ footer {
 
 .reserve-main-btn {
   width: 100%;
-  background-color: var(--accent-gold) !important;
+  background-color: #f2bf26 !important;
   color: var(--primary-dark) !important;
   font-weight: 700 !important;
   border: none !important;
@@ -1675,7 +1675,7 @@ footer {
   padding: 10px !important;
   font-size: 0.85rem !important;
   cursor: pointer;
-  box-shadow: 0 2px 8px rgba(212, 175, 55, 0.2);
+  box-shadow: 0 2px 8px rgba(242, 191, 38, 0.2);
   transition: all 0.2s ease;
   display: flex;
   justify-content: center;
@@ -1689,11 +1689,52 @@ footer {
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
+.chat-chips-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.slider-arrow {
+  background: rgba(255, 255, 255, 0.95) !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+  border-radius: 50% !important;
+  width: 22px !important;
+  height: 22px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 0.65rem !important;
+  font-weight: bold !important;
+  cursor: pointer !important;
+  position: absolute !important;
+  z-index: 10 !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
+  color: var(--text-main) !important;
+  transition: all 0.2s ease !important;
+  padding: 0 !important;
+}
+
+.slider-arrow:hover {
+  background-color: var(--primary-dark) !important;
+  color: white !important;
+  border-color: var(--primary-dark) !important;
+}
+
+.arrow-left {
+  left: -6px;
+}
+
+.arrow-right {
+  right: -6px;
+}
+
 .chat-chips-slider {
   display: flex;
   gap: 6px;
   overflow-x: auto;
-  padding: 4px 0;
+  padding: 4px 18px;
   width: 100%;
   scrollbar-width: none; /* Firefox */
 }

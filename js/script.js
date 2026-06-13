@@ -176,7 +176,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // Welcome message
-  const welcomeText = "¡Hola! Soy Mónica, fundadora y Tour Leader de Rimay Viajes. Me alegra saludarte. Te puedo contar sobre mi historia en Perú, el significado de Rimay, nuestros pilares de servicio, nuestros viajes o ayudarte a cotizar/reservar. ¿En qué te puedo ayudar hoy?";
+  const welcomeText = "¡Hola! Te puedo ayudar a planificar y reservar tu viaje a Perú, o responder tus dudas sobre el significado de Rimay, nuestros pilares de servicio y los destinos que ofrecemos. ¿En qué te puedo ayudar hoy?";
   addBotMessage(welcomeText);
 
   // Quick option buttons
@@ -189,6 +189,19 @@ document.addEventListener('DOMContentLoaded', () => {
       handleQuestion(questionKey);
     });
   });
+
+  // Quick option buttons scroll arrows
+  const chipsSlider = document.getElementById('chat-chips-slider');
+  const arrowLeft = document.getElementById('chip-arrow-left');
+  const arrowRight = document.getElementById('chip-arrow-right');
+  if (chipsSlider && arrowLeft && arrowRight) {
+    arrowLeft.addEventListener('click', () => {
+      chipsSlider.scrollBy({ left: -100, behavior: 'smooth' });
+    });
+    arrowRight.addEventListener('click', () => {
+      chipsSlider.scrollBy({ left: 100, behavior: 'smooth' });
+    });
+  }
 
   // Send message on click or enter
   chatSend.addEventListener('click', submitUserMessage);
