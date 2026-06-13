@@ -264,18 +264,12 @@ header.scrolled .hamburger span {
 .logo img {
   height: 42px;
   width: auto;
+  filter: brightness(0) invert(1);
+  transition: filter 0.3s ease;
 }
 
-.logo .logo-scrolled {
-  display: none;
-}
-
-header.scrolled .logo .logo-default {
-  display: none;
-}
-
-header.scrolled .logo .logo-scrolled {
-  display: block;
+header.scrolled .logo img {
+  filter: none;
 }
 
 .nav-links {
@@ -1362,6 +1356,7 @@ footer {
   height: 44px;
   width: auto;
   margin-bottom: 16px;
+  filter: brightness(0) invert(1);
 }
 
 .footer-brand p {
