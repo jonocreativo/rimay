@@ -1,0 +1,15 @@
+<svg width="1200" height="800" viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+    <style>
+      .title { font-family: 'Playfair Display', Georgia, serif; font-size: 36px; font-weight: bold; fill: #fdfbf7; text-anchor: middle; }
+      .sub { font-family: 'Montserrat', sans-serif; font-size: 16px; fill: #fdfbf7; opacity: 0.85; text-anchor: middle; letter-spacing: 1px; }
+      .border { stroke: #fdfbf7; stroke-dasharray: 6 6; stroke-width: 1.5; fill: none; opacity: 0.3; }
+    </style>
+    <rect width="100%" height="100%" fill="#2c3e2d"/>
+    
+    <path d="M 0,800 L 0,560 Q 360,400 720,600 T 1200,480 L 1200,800 Z" fill="#d4af37" opacity="0.15"/>
+    <path d="M 0,800 L 0,640 Q 540,520 960,680 T 1200,600 L 1200,800 Z" fill="#d4af37" opacity="0.25"/>
+    
+    <rect x="15" y="15" width="1170" height="770" class="border" rx="6"/>
+    <text x="50%" y="46%" class="title">Cusco y Machu Picchu</text>
+    <text x="50%" y="56%" class="sub">1200x800</text>
+  </svg>

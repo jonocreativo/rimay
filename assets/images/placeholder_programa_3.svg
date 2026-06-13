@@ -1,0 +1,15 @@
+<svg width="600" height="400" viewBox="0 0 600 400" xmlns="http://www.w3.org/2000/svg">
+    <style>
+      .title { font-family: 'Playfair Display', Georgia, serif; font-size: 22px; font-weight: bold; fill: #fdfbf7; text-anchor: middle; }
+      .sub { font-family: 'Montserrat', sans-serif; font-size: 12px; fill: #fdfbf7; opacity: 0.85; text-anchor: middle; letter-spacing: 1px; }
+      .border { stroke: #fdfbf7; stroke-dasharray: 6 6; stroke-width: 1.5; fill: none; opacity: 0.3; }
+    </style>
+    <rect width="100%" height="100%" fill="#2c3e2d"/>
+    
+    <path d="M 0,400 L 0,280 Q 180,200 360,300 T 600,240 L 600,400 Z" fill="#d4af37" opacity="0.15"/>
+    <path d="M 0,400 L 0,320 Q 270,260 480,340 T 600,300 L 600,400 Z" fill="#d4af37" opacity="0.25"/>
+    
+    <rect x="15" y="15" width="570" height="370" class="border" rx="6"/>
+    <text x="50%" y="46%" class="title">Programa Puno y Lago</text>
+    <text x="50%" y="56%" class="sub">600x400</text>
+  </svg>

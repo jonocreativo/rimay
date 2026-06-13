@@ -1,0 +1,12 @@
+<svg width="200" height="60" viewBox="0 0 200 60" xmlns="http://www.w3.org/2000/svg">
+      <style>
+        .title { font-family: 'Playfair Display', Georgia, serif; font-size: 22px; font-weight: bold; fill: #2c3e2d; }
+        .sub { font-family: 'Montserrat', sans-serif; font-size: 10px; fill: #2c3e2d; letter-spacing: 3px; text-transform: uppercase; opacity: 0.8; }
+      </style>
+      <rect width="100%" height="100%" fill="#fdfbf7"/>
+      <g transform="translate(10, 10)">
+        <path d="M 5,5 L 25,5 L 25,35 L 5,35 Z M 12,5 L 12,35 M 5,18 L 25,18" fill="none" stroke="#2c3e2d" stroke-width="2" opacity="0.9"/>
+        <text x="38" y="22" class="title">Rimay</text>
+        <text x="38" y="34" class="sub">VIAJES</text>
+      </g>
+    </svg>

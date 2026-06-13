@@ -1,0 +1,15 @@
+<svg width="1920" height="1080" viewBox="0 0 1920 1080" xmlns="http://www.w3.org/2000/svg">
+    <style>
+      .title { font-family: 'Playfair Display', Georgia, serif; font-size: 36px; font-weight: bold; fill: #fdfbf7; text-anchor: middle; }
+      .sub { font-family: 'Montserrat', sans-serif; font-size: 16px; fill: #fdfbf7; opacity: 0.85; text-anchor: middle; letter-spacing: 1px; }
+      .border { stroke: #fdfbf7; stroke-dasharray: 6 6; stroke-width: 1.5; fill: none; opacity: 0.3; }
+    </style>
+    <rect width="100%" height="100%" fill="#2c3e2d"/>
+    
+    <path d="M 0,1080 L 0,756 Q 576,540 1152,810 T 1920,648 L 1920,1080 Z" fill="#d4af37" opacity="0.15"/>
+    <path d="M 0,1080 L 0,864 Q 864,702 1536,918 T 1920,810 L 1920,1080 Z" fill="#d4af37" opacity="0.25"/>
+    
+    <rect x="15" y="15" width="1890" height="1050" class="border" rx="6"/>
+    <text x="50%" y="46%" class="title">Hero Slide 1 - Andes</text>
+    <text x="50%" y="56%" class="sub">1920x1080</text>
+  </svg>
