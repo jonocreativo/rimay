@@ -266,6 +266,18 @@ header.scrolled .hamburger span {
   width: auto;
 }
 
+.logo .logo-scrolled {
+  display: none;
+}
+
+header.scrolled .logo .logo-default {
+  display: none;
+}
+
+header.scrolled .logo .logo-scrolled {
+  display: block;
+}
+
 .nav-links {
   display: flex;
   align-items: center;
