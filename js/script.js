@@ -162,6 +162,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const chatInput = document.getElementById('chat-input');
   const chatSend = document.getElementById('chat-send');
   const quickOptButtons = document.querySelectorAll('.quick-opt-btn');
+  const chatTooltip = document.getElementById('chat-tooltip');
+  const chatTooltipClose = document.getElementById('chat-tooltip-close');
 
   // Toggle chat window
   chatButton.addEventListener('click', () => {
@@ -169,11 +171,21 @@ document.addEventListener('DOMContentLoaded', () => {
     // Hide the red badge on first open
     const badge = chatButton.querySelector('.chat-badge-pulse');
     if (badge) badge.style.display = 'none';
+    // Hide speech bubble tooltip
+    if (chatTooltip) chatTooltip.style.display = 'none';
   });
 
   chatClose.addEventListener('click', () => {
     chatWindow.classList.remove('open');
   });
+
+  // Close speech bubble tooltip when clicking the tiny close button
+  if (chatTooltip && chatTooltipClose) {
+    chatTooltipClose.addEventListener('click', (e) => {
+      e.stopPropagation();
+      chatTooltip.style.display = 'none';
+    });
+  }
 
   // Welcome message
   const welcomeText = "¡Hola! Te puedo ayudar a planificar y reservar tu viaje a Perú, o responder tus dudas sobre el significado de Rimay, nuestros pilares de servicio y los destinos que ofrecemos. ¿En qué te puedo ayudar hoy?";

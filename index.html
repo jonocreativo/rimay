@@ -657,6 +657,12 @@
 
   <!-- Chatbot Float Widget -->
   <div class="chatbot-widget" id="chatbot-widget">
+    <!-- Speech bubble tooltip -->
+    <div class="chat-tooltip" id="chat-tooltip">
+      <span>Chatea con nosotros y haz tu reserva</span>
+      <button class="chat-tooltip-close" id="chat-tooltip-close" aria-label="Cerrar mensaje">&times;</button>
+    </div>
+
     <div class="chat-button" id="chat-button" aria-label="Abrir chat">
       <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2">
         <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
@@ -666,9 +672,9 @@
     
     <div class="chat-window" id="chat-window">
       <div class="chat-header">
-        <div class="chat-avatar">M</div>
+        <div class="chat-avatar" style="background-color: white; color: var(--primary-dark);">R</div>
         <div class="chat-header-info">
-          <h4>Mónica</h4>
+          <h4 style="color: white; margin: 0;">Rimay Viajes</h4>
           <span class="chat-status">En línea</span>
         </div>
         <button class="chat-close" id="chat-close" aria-label="Cerrar chat">&times;</button>
