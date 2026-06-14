@@ -1523,8 +1523,8 @@ footer {
   display: flex;
   justify-content: center;
   align-items: center;
-  color: rgba(253, 251, 247, 0.4);
-  font-size: 0.78rem;
+  color: rgba(253, 251, 247, 0.85);
+  font-size: 0.68rem;
 }
 
 @media (max-width: 992px) {
