@@ -165,14 +165,60 @@ document.addEventListener('DOMContentLoaded', () => {
   const chatTooltip = document.getElementById('chat-tooltip');
   const chatTooltipClose = document.getElementById('chat-tooltip-close');
 
+  // Speech bubble tooltip interval logic
+  let tooltipTimer;
+  let tooltipCycle;
+
+  function showTooltip() {
+    if (chatTooltip && !chatWindow.classList.contains('open')) {
+      chatTooltip.classList.add('visible');
+    }
+  }
+
+  function hideTooltip() {
+    if (chatTooltip) {
+      chatTooltip.classList.remove('visible');
+    }
+  }
+
+  function startTooltipCycle() {
+    // Initial display after 3 seconds
+    tooltipTimer = setTimeout(() => {
+      showTooltip();
+      
+      // Toggle state every 10s: 10s visible, 10s hidden, etc.
+      tooltipCycle = setInterval(() => {
+        if (chatTooltip.classList.contains('visible')) {
+          hideTooltip();
+        } else {
+          if (!chatWindow.classList.contains('open')) {
+            showTooltip();
+          }
+        }
+      }, 10000);
+    }, 3000);
+  }
+
+  function stopTooltipCycle() {
+    clearTimeout(tooltipTimer);
+    clearInterval(tooltipCycle);
+    hideTooltip();
+  }
+
+  // Start cycle initially
+  if (chatTooltip) {
+    startTooltipCycle();
+  }
+
   // Toggle chat window
   chatButton.addEventListener('click', () => {
     chatWindow.classList.toggle('open');
     // Hide the red badge on first open
     const badge = chatButton.querySelector('.chat-badge-pulse');
     if (badge) badge.style.display = 'none';
-    // Hide speech bubble tooltip
-    if (chatTooltip) chatTooltip.style.display = 'none';
+    
+    // Stop tooltip cycle and hide it
+    stopTooltipCycle();
   });
 
   chatClose.addEventListener('click', () => {
@@ -183,7 +229,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (chatTooltip && chatTooltipClose) {
     chatTooltipClose.addEventListener('click', (e) => {
       e.stopPropagation();
-      chatTooltip.style.display = 'none';
+      stopTooltipCycle();
     });
   }
 

@@ -1596,8 +1596,20 @@ footer {
   font-weight: 600;
   white-space: nowrap;
   z-index: 1999;
-  animation: bounceTooltip 2s infinite alternate;
   border: 1px solid rgba(0,0,0,0.06);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.5s ease, transform 0.5s ease, visibility 0.5s ease;
+  transform: translateY(10px);
+}
+
+.chat-tooltip.visible {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateY(0);
+  animation: bounceTooltip 2s infinite alternate;
 }
 
 .chat-tooltip::after {
@@ -1657,6 +1669,25 @@ footer {
   transform: scale(1.05);
   background-color: var(--accent-gold);
   color: var(--primary-dark);
+}
+
+.chat-button svg {
+  animation: svgVibrate 6s infinite;
+  transform-origin: center;
+  transition: transform 0.3s ease;
+}
+
+.chat-button:hover svg {
+  animation: none;
+  transform: scale(1.1);
+}
+
+@keyframes svgVibrate {
+  0%, 85%, 100% { transform: rotate(0deg) scale(1); }
+  88% { transform: rotate(-8deg) scale(1.1); }
+  91% { transform: rotate(8deg) scale(1.1); }
+  94% { transform: rotate(-6deg) scale(1.1); }
+  97% { transform: rotate(6deg) scale(1.1); }
 }
 
 .chat-badge-pulse {
