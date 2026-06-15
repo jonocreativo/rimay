@@ -9,3 +9,10 @@ Thumbs.db
 *.tmp
 .idea/
 .vscode/
+
+# Node/Repomix
+node_modules/
+package-lock.json
+repomix-output.md
+repomix.config.json
+

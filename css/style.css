@@ -228,14 +228,14 @@ header {
   width: 100%;
   z-index: 1000;
   transition: background-color 0.4s ease, padding 0.4s ease, box-shadow 0.4s ease;
-  padding: 18px 0;
+  padding: 22px 0; /* Aumentado ligeramente para dar más aire vertical */
   background-color: transparent;
 }
 
 header.scrolled {
   background-color: rgba(253, 251, 247, 0.96);
   box-shadow: var(--shadow-sm);
-  padding: 10px 0;
+  padding: 12px 0; /* Aumentado ligeramente para dar espacio al logo de 50px */
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
 }
@@ -262,7 +262,7 @@ header.scrolled .hamburger span {
 }
 
 .logo img {
-  height: 42px;
+  height: 50px; /* Incrementado de 42px a 50px */
   width: auto;
   filter: brightness(0) invert(1);
   transition: filter 0.3s ease;
@@ -270,6 +270,66 @@ header.scrolled .hamburger span {
 
 header.scrolled .logo img {
   filter: none;
+}
+
+/* ── Logo & Lema Sweep Animation ── */
+.logo-animation-container {
+  height: 50px; /* Incrementado de 42px a 50px */
+  width: 210px; /* Incrementado proporcionalmente de 180px a 210px para evitar recortes horizontales */
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.logo-slide-track {
+  display: flex;
+  flex-direction: column;
+  gap: 20px; /* Separación transparente de seguridad para evitar fugas de píxeles */
+  height: 190px; /* 3 imágenes de 50px + 2 espacios de 20px = 190px */
+  margin: 0;
+  padding: 0;
+  animation: logoSweep 10s infinite;
+  /* Forzar aceleración por hardware para evitar calces subpixel/fantasmas */
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+.logo-slide-track img {
+  height: 50px; /* Incrementado de 42px a 50px */
+  width: 100%;
+  display: block;
+  margin: 0;
+  padding: 0;
+  border: none;
+  object-fit: contain;
+  object-position: left center;
+  /* Evitar artefactos de renderizado */
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+}
+
+
+@keyframes logoSweep {
+  0%, 50% {
+    /* Muestra el Logo (Elemento 3, abajo) a -(2 * 50px + 2 * 20px) = -140px */
+    transform: translate3d(0, -140px, 0);
+    animation-timing-function: cubic-bezier(0.55, 0.085, 0.68, 0.53); /* Aceleración orgánica de menos a más rápido */
+  }
+  55%, 75% {
+    /* Muestra el Lema (Elemento 2, medio) a -(1 * 50px + 1 * 20px) = -70px */
+    transform: translate3d(0, -70px, 0);
+    animation-timing-function: cubic-bezier(0.55, 0.085, 0.68, 0.53); /* Aceleración orgánica de menos a más rápido */
+  }
+  80%, 99.99% {
+    /* Muestra el Logo (Elemento 1, arriba) a 0px */
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    /* Salto instantáneo sin transición al inicio del ciclo */
+    transform: translate3d(0, -140px, 0);
+  }
 }
 
 .nav-links {
