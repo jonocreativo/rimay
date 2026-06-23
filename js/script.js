@@ -408,12 +408,13 @@ document.addEventListener('DOMContentLoaded', () => {
         'Accept': 'application/json'
       },
       body: JSON.stringify({
-        nombre: nombre,
-        email: email,
-        telefono: telefono,
-        programa: programa,
-        mensaje: mensaje,
-        _subject: `Nueva consulta de chatbot: ${nombre}`
+        "Nombre Completo": nombre,
+        "Correo Electrónico": email,
+        "WhatsApp / Teléfono": telefono,
+        "Programa de Interés": programa,
+        "Mensaje / Consulta": mensaje,
+        "_subject": `Nueva consulta de chatbot: ${nombre}`,
+        "_captcha": "false"
       })
     })
     .then(() => {
@@ -464,8 +465,25 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const formData = new FormData(form);
-    const dataObj = Object.fromEntries(formData);
-    dataObj['_subject'] = `Nueva cotización/reserva: ${dataObj.nombre || ''}`;
+    const nombre = formData.get('nombre') || '';
+    const email = formData.get('email') || '';
+    const telefono = formData.get('telefono') || '';
+    const programa = formData.get('programa') || '';
+    const fecha = formData.get('fecha') || '';
+    const viajeros = formData.get('viajeros') || '';
+    const mensaje = formData.get('mensaje') || '';
+
+    const payload = {
+      "Nombre Completo": nombre,
+      "Correo Electrónico": email,
+      "WhatsApp / Teléfono": telefono,
+      "Programa de Interés": programa,
+      "Fecha Estimada de Viaje": fecha,
+      "Número de Viajeros": viajeros,
+      "Mensaje / Requerimientos Especiales": mensaje,
+      "_subject": `Nueva cotización/reserva: ${nombre}`,
+      "_captcha": "false"
+    };
 
     fetch('https://formsubmit.co/ajax/viajemos@rimayviajes.cl', {
       method: 'POST',
@@ -473,7 +491,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'Content-Type': 'application/json',
         'Accept': 'application/json'
       },
-      body: JSON.stringify(dataObj)
+      body: JSON.stringify(payload)
     })
     .then(response => response.json())
     .then(data => {
