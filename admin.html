@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rimay Viajes | Panel de Administración</title>
+  
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --primary-dark: #2c3e2d;
+      --primary-dark-hover: #1b261c;
+      --background-light: #fdfbf7;
+      --background-alt: #f5efe4;
+      --accent-gold: #d4af37;
+      --accent-gold-hover: #b89528;
+      --text-main: #333333;
+      --text-muted: #626b63;
+      --border-color: #e6dfd3;
+      --border-radius: 12px;
+      --shadow: 0 8px 24px rgba(44, 62, 45, 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background-color: var(--background-light);
+      color: var(--text-main);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* Glassmorphism Background Shapes */
+    .bg-shapes {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      overflow: hidden;
+      background: linear-gradient(135deg, #f5efe4 0%, #fdfbf7 100%);
+    }
+
+    .shape {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.4;
+    }
+
+    .shape-1 {
+      top: -10%;
+      right: -10%;
+      width: 40vw;
+      height: 40vw;
+      background-color: var(--primary-dark);
+    }
+
+    .shape-2 {
+      bottom: -10%;
+      left: -10%;
+      width: 50vw;
+      height: 50vw;
+      background-color: var(--accent-gold);
+    }
+
+    /* Container */
+    .admin-container {
+      max-width: 1100px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    /* Login Box */
+    .login-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 80vh;
+    }
+
+    .login-card {
+      background: rgba(253, 251, 247, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(253, 251, 247, 0.6);
+      width: 100%;
+      max-width: 440px;
+      padding: 40px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      text-align: center;
+    }
+
+    .login-card h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      color: var(--primary-dark);
+      margin-bottom: 10px;
+    }
+
+    .login-card p {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      margin-bottom: 30px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+      text-align: left;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--primary-dark);
+      margin-bottom: 8px;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 14px 18px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      background-color: #ffffff;
+      font-family: inherit;
+      font-size: 0.95rem;
+      transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: var(--primary-dark);
+      box-shadow: 0 0 0 3px rgba(44, 62, 45, 0.1);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 14px 28px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: none;
+      font-family: inherit;
+    }
+
+    .btn-block {
+      width: 100%;
+    }
+
+    .btn-primary {
+      background-color: var(--primary-dark);
+      color: #ffffff;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--primary-dark-hover);
+      transform: translateY(-1px);
+    }
+
+    .btn-accent {
+      background-color: var(--accent-gold);
+      color: var(--primary-dark);
+    }
+
+    .btn-accent:hover {
+      background-color: var(--accent-gold-hover);
+      transform: translateY(-1px);
+    }
+
+    .btn-danger {
+      background-color: #c94a4a;
+      color: #ffffff;
+    }
+
+    .btn-danger:hover {
+      background-color: #b03a3a;
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--primary-dark);
+      color: var(--primary-dark);
+    }
+
+    .btn-outline:hover {
+      background-color: var(--primary-dark);
+      color: #ffffff;
+    }
+
+    .login-error {
+      color: #c94a4a;
+      font-size: 0.85rem;
+      margin-top: 15px;
+      display: none;
+    }
+
+    /* Dashboard Header */
+    .dashboard-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border-color);
+      margin-bottom: 30px;
+    }
+
+    .dashboard-header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.2rem;
+      color: var(--primary-dark);
+    }
+
+    .dashboard-header-right {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+    }
+
+    /* Dashboard Grid / Panel */
+    .dashboard-panel {
+      background-color: #ffffff;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      padding: 30px;
+      border: 1px solid var(--border-color);
+    }
+
+    .panel-section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      color: var(--primary-dark);
+      margin-bottom: 20px;
+    }
+
+    /* Table styling for posts */
+    .posts-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    .posts-table th, .posts-table td {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border-color);
+      vertical-align: middle;
+    }
+
+    .posts-table th {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      background-color: var(--background-alt);
+    }
+
+    .posts-table tr:hover td {
+      background-color: rgba(245, 239, 228, 0.3);
+    }
+
+    .post-title-col {
+      font-weight: 600;
+      color: var(--primary-dark);
+    }
+
+    .post-date-col {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .actions-cell {
+      display: inline-flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .btn-sm {
+      padding: 8px 14px;
+      font-size: 0.7rem;
+      border-radius: 6px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-muted);
+    }
+
+    /* Form styling for editor */
+    .editor-grid {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr;
+      gap: 30px;
+    }
+
+    @media (max-width: 768px) {
+      .editor-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Rich Text Editor Body */
+    .editor-outer {
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      overflow: hidden;
+      background-color: #ffffff;
+      margin-top: 5px;
+    }
+
+    .editor-toolbar {
+      background-color: var(--background-alt);
+      border-bottom: 1px solid var(--border-color);
+      padding: 8px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .toolbar-btn {
+      background-color: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      width: 32px;
+      height: 32px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      color: var(--primary-dark);
+      font-family: inherit;
+      transition: all 0.2s ease;
+    }
+
+    .toolbar-btn:hover {
+      background-color: var(--primary-dark);
+      color: #ffffff;
+      border-color: var(--primary-dark);
+    }
+
+    .toolbar-select {
+      background-color: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      padding: 0 8px;
+      font-family: inherit;
+      font-size: 0.8rem;
+      height: 32px;
+      cursor: pointer;
+    }
+
+    .editor-body {
+      min-height: 300px;
+      max-height: 500px;
+      overflow-y: auto;
+      padding: 20px;
+      outline: none;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.95rem;
+      color: var(--text-main);
+    }
+
+    .editor-body h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem;
+      color: var(--primary-dark);
+      margin: 15px 0 10px 0;
+    }
+
+    .editor-body p {
+      margin-bottom: 15px;
+    }
+
+    .editor-body img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 8px;
+      margin: 15px 0;
+      display: block;
+    }
+
+    /* Preview Card */
+    .preview-card {
+      background-color: var(--background-alt);
+      border-radius: var(--border-radius);
+      padding: 20px;
+      border: 1px solid var(--border-color);
+      align-self: start;
+    }
+
+    .preview-img-container {
+      width: 100%;
+      height: 180px;
+      background-color: #e6dfd3;
+      border-radius: 6px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      margin-bottom: 15px;
+      position: relative;
+    }
+
+    .preview-img-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .preview-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      color: var(--primary-dark);
+      margin-bottom: 8px;
+    }
+
+    .preview-subtitle {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 15px;
+    }
+
+    .preview-meta {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .image-upload-box {
+      border: 2px dashed var(--border-color);
+      border-radius: 8px;
+      padding: 20px;
+      text-align: center;
+      background-color: #ffffff;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-bottom: 10px;
+    }
+
+    .image-upload-box:hover {
+      border-color: var(--primary-dark);
+      background-color: var(--background-light);
+    }
+
+    .image-upload-box input[type="file"] {
+      display: none;
+    }
+
+    .image-upload-box p {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 0;
+    }
+
+    /* Footer styling */
+    .admin-footer {
+      text-align: center;
+      margin-top: 50px;
+      padding: 20px 0;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border-color);
+    }
+
+    .admin-footer a {
+      color: var(--primary-dark);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .admin-footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Background glass shapes -->
+  <div class="bg-shapes">
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+  </div>
+
+  <div class="admin-container">
+
+    <!-- 1. LOGIN CONTAINER -->
+    <div id="login-container" class="login-wrapper">
+      <div class="login-card">
+        <h2>Rimay Admin</h2>
+        <p>Inicia sesión para gestionar los posts del blog</p>
+        
+        <form id="login-form">
+          <div class="form-group">
+            <label for="username">Usuario</label>
+            <input type="text" id="username" class="form-control" placeholder="Ingresa tu usuario" required autocomplete="username">
+          </div>
+          <div class="form-group">
+            <label for="password">Contraseña</label>
+            <input type="password" id="password" class="form-control" placeholder="Ingresa tu contraseña" required autocomplete="current-password">
+          </div>
+          <button type="submit" class="btn btn-primary btn-block">Iniciar Sesión</button>
+          <div id="login-error" class="login-error">Usuario o contraseña incorrectos. Inténtalo de nuevo.</div>
+        </form>
+      </div>
+    </div>
+
+    <!-- 2. DASHBOARD CONTAINER (Initially Hidden) -->
+    <div id="dashboard-container" style="display: none;">
+      <div class="dashboard-header">
+        <div>
+          <h1>Panel de Control</h1>
+          <p style="color: var(--text-muted); font-size: 0.9rem;">Bienvenido de vuelta, Administrador</p>
+        </div>
+        <div class="dashboard-header-right">
+          <button id="btn-new-post" class="btn btn-accent">+ Crear Post</button>
+          <button id="btn-logout" class="btn btn-outline">Cerrar Sesión</button>
+        </div>
+      </div>
+
+      <!-- 2.1 Post Manager Panel -->
+      <div id="manager-panel" class="dashboard-panel">
+        <h2 class="panel-section-title">Publicaciones del Blog</h2>
+        
+        <div style="overflow-x: auto;">
+          <table class="posts-table">
+            <thead>
+              <tr>
+                <th>Título</th>
+                <th>Autor</th>
+                <th>Fecha de Creación</th>
+                <th style="width: 200px;">Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="posts-list-body">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+        <div id="empty-posts" class="empty-state" style="display: none;">
+          No hay posts publicados. Haz clic en "+ Crear Post" para publicar el primero.
+        </div>
+      </div>
+
+      <!-- 2.2 Post Form Panel (Initially Hidden) -->
+      <div id="editor-panel" class="dashboard-panel" style="display: none; margin-top: 20px;">
+        <h2 id="editor-title" class="panel-section-title">Nuevo Post</h2>
+        
+        <form id="post-form">
+          <input type="hidden" id="edit-post-id">
+          
+          <div class="editor-grid">
+            <!-- Left Side: Fields and Text Editor -->
+            <div>
+              <div class="form-group">
+                <label for="post-title">Título del Artículo</label>
+                <input type="text" id="post-title" class="form-control" placeholder="Ej. Cómo hacer Slow Tourism en Cusco" required>
+              </div>
+
+              <div class="form-group">
+                <label for="post-subtitle">Subtítulo / Breve Resumen</label>
+                <input type="text" id="post-subtitle" class="form-control" placeholder="Una breve descripción para la tarjeta del post" required>
+              </div>
+
+              <div class="form-group">
+                <label for="post-author">Autor</label>
+                <input type="text" id="post-author" class="form-control" value="Mónica Carrión" required>
+              </div>
+
+              <div class="form-group">
+                <label for="post-publish-date">Fecha y Hora de Publicación (Programar)</label>
+                <input type="datetime-local" id="post-publish-date" class="form-control" required>
+              </div>
+
+              <div class="form-group">
+                <label>Contenido del Artículo (Editor Enriquecido)</label>
+                
+                <div class="editor-outer">
+                  <!-- Rich Text Toolbar -->
+                  <div class="editor-toolbar">
+                    <button type="button" class="toolbar-btn" onclick="formatDoc('bold')" title="Negrita"><b>B</b></button>
+                    <button type="button" class="toolbar-btn" onclick="formatDoc('italic')" title="Cursiva"><i>I</i></button>
+                    <button type="button" class="toolbar-btn" onclick="formatDoc('underline')" title="Subrayado"><u>U</u></button>
+                    
+                    <select class="toolbar-select" onchange="formatBlock(this.value)" title="Formato de bloque">
+                      <option value="p">Párrafo</option>
+                      <option value="h3">Encabezado 3</option>
+                      <option value="h4">Encabezado 4</option>
+                    </select>
+
+                    <button type="button" class="toolbar-btn" onclick="formatDoc('insertUnorderedList')" title="Lista con viñetas">•☰</button>
+                    <button type="button" class="toolbar-btn" onclick="formatDoc('insertOrderedList')" title="Lista numerada">1☰</button>
+                    <button type="button" class="toolbar-btn" onclick="formatDoc('outdent')" title="Disminuir sangría">⇠</button>
+                    <button type="button" class="toolbar-btn" onclick="formatDoc('indent')" title="Aumentar sangría">⇢</button>
+
+                    <button type="button" class="toolbar-btn" onclick="insertLink()" title="Insertar Enlace">🔗</button>
+                    <button type="button" class="toolbar-btn" onclick="document.getElementById('body-image-file').click()" title="Subir Imagen">🖼️</button>
+                    <input type="file" id="body-image-file" accept="image/*" style="display:none;" onchange="handleBodyImageUpload(this)">
+                  </div>
+
+                  <!-- Editable Area -->
+                  <div id="editor-body" class="editor-body" contenteditable="true" oninput="updateLivePreview()">
+                    <p>Escribe tu artículo aquí...</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Side: Cover Image and Preview Card -->
+            <div>
+              <div class="form-group">
+                <label>Imagen de Portada (Destacada)</label>
+                
+                <div class="image-upload-box" onclick="document.getElementById('post-image-file').click()">
+                  <input type="file" id="post-image-file" accept="image/*" onchange="handleImageUpload(this)">
+                  <p id="upload-box-text">📁 Haz clic aquí para subir una imagen</p>
+                </div>
+                
+                <input type="text" id="post-image-url" class="form-control" placeholder="O ingresa la URL de una imagen externa" oninput="updatePreviewImageFromUrl(this.value)">
+              </div>
+
+              <!-- Live Preview Card -->
+              <div class="preview-card">
+                <h3 style="font-family: inherit; font-size: 0.85rem; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 12px;">Vista Previa de la Tarjeta</h3>
+                
+                <div class="preview-img-container" id="preview-image-container">
+                  <span id="preview-placeholder">Sin imagen</span>
+                </div>
+                <div class="preview-title" id="preview-title">Título del post</div>
+                <div class="preview-subtitle" id="preview-subtitle">Subtítulo o breve resumen...</div>
+                <div class="preview-meta">
+                  <span id="preview-author">Por Mónica Carrión</span>
+                  <span id="preview-date">Hoy</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 15px; margin-top: 30px; justify-content: flex-end;">
+            <button type="button" id="btn-cancel" class="btn btn-outline">Cancelar</button>
+            <button type="submit" class="btn btn-primary">Guardar Publicación</button>
+          </div>
+        </form>
+      </div>
+
+    </div>
+
+    <footer class="admin-footer">
+      <p>&copy; 2026 Rimay Viajes. Diseñado con amor en Cusco. <a href="index.html">&larr; Volver al Sitio Web</a></p>
+    </footer>
+
+  </div>
+
+  <script>
+    // --- AUTHENTICATION CREDENTIALS ---
+    const ADMIN_USER = 'admin';
+    const ADMIN_PASS = 'rimay2026admin';
+
+    // --- DOM ELEMENTS ---
+    const loginContainer = document.getElementById('login-container');
+    const dashboardContainer = document.getElementById('dashboard-container');
+    const loginForm = document.getElementById('login-form');
+    const usernameInput = document.getElementById('username');
+    const passwordInput = document.getElementById('password');
+    const loginError = document.getElementById('login-error');
+
+    const btnLogout = document.getElementById('btn-logout');
+    const btnNewPost = document.getElementById('btn-new-post');
+    const btnCancel = document.getElementById('btn-cancel');
+    
+    const managerPanel = document.getElementById('manager-panel');
+    const editorPanel = document.getElementById('editor-panel');
+    const editorTitle = document.getElementById('editor-title');
+    const postsListBody = document.getElementById('posts-list-body');
+    const emptyPostsDiv = document.getElementById('empty-posts');
+
+    const postForm = document.getElementById('post-form');
+    const postIdInput = document.getElementById('edit-post-id');
+    const postTitleInput = document.getElementById('post-title');
+    const postSubtitleInput = document.getElementById('post-subtitle');
+    const postAuthorInput = document.getElementById('post-author');
+    const postPublishDateInput = document.getElementById('post-publish-date');
+    const postImageUrlInput = document.getElementById('post-image-url');
+    const postImageFileInput = document.getElementById('post-image-file');
+    const editorBody = document.getElementById('editor-body');
+
+    // Live Preview elements
+    const previewTitle = document.getElementById('preview-title');
+    const previewSubtitle = document.getElementById('preview-subtitle');
+    const previewAuthor = document.getElementById('preview-author');
+    const previewImageContainer = document.getElementById('preview-image-container');
+
+    // Temporary storage for uploaded base64 image
+    let tempBase64Image = '';
+
+    // --- SESSION INITIALIZATION ---
+    document.addEventListener('DOMContentLoaded', () => {
+      // Check sessionStorage (closes on tab close)
+      if (sessionStorage.getItem('rimay_admin_authenticated') === 'true') {
+        showDashboard();
+      } else {
+        showLogin();
+      }
+    });
+
+    // --- LOGIN HANDLER ---
+    loginForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const user = usernameInput.value.trim();
+      const pass = passwordInput.value.trim();
+
+      if (user === ADMIN_USER && pass === ADMIN_PASS) {
+        sessionStorage.setItem('rimay_admin_authenticated', 'true');
+        loginError.style.display = 'none';
+        showDashboard();
+        // Clear fields
+        usernameInput.value = '';
+        passwordInput.value = '';
+      } else {
+        loginError.style.display = 'block';
+      }
+    });
+
+    // --- LOGOUT HANDLER ---
+    btnLogout.addEventListener('click', () => {
+      sessionStorage.removeItem('rimay_admin_authenticated');
+      showLogin();
+    });
+
+    // --- VIEW CHANGERS ---
+    function showLogin() {
+      loginContainer.style.display = 'flex';
+      dashboardContainer.style.display = 'none';
+    }
+
+    // Helper to get local date time formatted for datetime-local
+    function getCurrentDateTimeLocal() {
+      const now = new Date();
+      now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+      return now.toISOString().slice(0, 16);
+    }
+
+    function showDashboard() {
+      loginContainer.style.display = 'none';
+      dashboardContainer.style.display = 'block';
+      showManager();
+      loadPosts();
+    }
+
+    function showManager() {
+      managerPanel.style.display = 'block';
+      editorPanel.style.display = 'none';
+    }
+
+    function showEditor(isEditMode = false) {
+      managerPanel.style.display = 'none';
+      editorPanel.style.display = 'block';
+      
+      if (!isEditMode) {
+        editorTitle.innerText = "Crear Nuevo Post";
+        postIdInput.value = '';
+        postForm.reset();
+        postPublishDateInput.value = getCurrentDateTimeLocal();
+        editorBody.innerHTML = "<p>Escribe tu artículo aquí...</p>";
+        tempBase64Image = '';
+        document.getElementById('upload-box-text').innerText = "📁 Haz clic aquí para subir una imagen";
+        updateLivePreview();
+      } else {
+        editorTitle.innerText = "Editar Artículo";
+      }
+    }
+
+    // --- LOCALSTORAGE DATA MANAGEMENT ---
+    function getStoredPosts() {
+      const posts = localStorage.getItem('rimay_posts');
+      return posts ? JSON.parse(posts) : [];
+    }
+
+    function saveStoredPosts(posts) {
+      localStorage.setItem('rimay_posts', JSON.stringify(posts));
+    }
+
+    // --- DOCK DEFAULT POSTS IF STORAGE IS EMPTY ---
+    function checkAndInitDefaultPosts() {
+      let posts = getStoredPosts();
+      if (posts.length === 0) {
+        posts = [
+          {
+            id: '1',
+            title: 'Cómo practicar Slow Tourism en el Valle Sagrado',
+            subtitle: 'Viajar sin prisas para reconectar con el latido real de los Andes y sus tradiciones ancestrales.',
+            author: 'Mónica Carrión',
+            date: '2026-06-10',
+            publishDate: '2026-06-10T12:00',
+            image: 'assets/images/img-nosotros3.jpeg',
+            content: '<h3>El arte de viajar sin prisa</h3><p>En el corazón de los Andes peruanos, el Valle Sagrado se extiende como un lienzo de vegetación, terrazas incas y comunidades locales que guardan costumbres milenarias. Hoy en día, la velocidad del turismo moderno suele pasarnos la cuenta, impidiéndonos captar la esencia espiritual de estos lugares. Por eso, en Rimay Viajes promovemos fervientemente el <strong>Slow Tourism</strong> o Turismo Lento.</p><p>Practicar Slow Tourism en el Valle Sagrado significa hospedarse en posadas locales, saborear comidas preparadas con ingredientes de la chacra comunitaria, y pasar horas conversando con los artesanos locales. No se trata de cuántos monumentos visitas en un día, sino de la profundidad del vínculo que generas con el lugar.</p>'
+          },
+          {
+            id: '2',
+            title: 'El significado espiritual de Machu Picchu',
+            subtitle: 'Un recorrido consciente más allá de las fotos clásicas, explorando la energía de la gran ciudadela inca.',
+            author: 'Mónica Carrión',
+            date: '2026-06-12',
+            publishDate: '2026-06-12T12:00',
+            image: 'assets/images/placeholder_machupicchu.svg',
+            content: '<h3>Más allá del monumento</h3><p>Machu Picchu es mundialmente famosa como una obra maestra de la arquitectura incaica. Sin embargo, para los antiguos pobladores y para quienes nos acercamos con una mirada consciente, representa un gran observatorio astronómico y un centro de sanación espiritual.</p><p>Al ingresar temprano a la ciudadela, te invitamos a buscar un espacio tranquilo, respirar profundo y contemplar la alineación de los templos principales con los Apus (montañas sagradas). Conectar con la tierra (Pachamama) en este rincón sagrado es una experiencia que transforma el alma y nos ayuda a regresar a casa con el corazón renovado.</p>'
+          }
+        ];
+        saveStoredPosts(posts);
+      }
+      return posts;
+    }
+
+    // --- LOAD POSTS IN TABLE ---
+    function loadPosts() {
+      const posts = checkAndInitDefaultPosts();
+      postsListBody.innerHTML = '';
+
+      if (posts.length === 0) {
+        emptyPostsDiv.style.display = 'block';
+        return;
+      }
+
+      emptyPostsDiv.style.display = 'none';
+      
+      // Sort posts by publishDate descending
+      posts.sort((a, b) => new Date(b.publishDate || b.date) - new Date(a.publishDate || a.date));
+
+      posts.forEach(post => {
+        const publishTime = new Date(post.publishDate || post.date);
+        const isScheduled = publishTime > new Date();
+        const statusBadge = isScheduled 
+          ? `<span style="background-color: #f5efe4; color: #b89528; padding: 4px 8px; border-radius: 4px; font-weight: 600; font-size: 0.7rem; margin-left: 8px;">Programado</span>`
+          : `<span style="background-color: #e6dfd3; color: #2c3e2d; padding: 4px 8px; border-radius: 4px; font-weight: 600; font-size: 0.7rem; margin-left: 8px;">Publicado</span>`;
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td class="post-title-col">${escapeHtml(post.title)}</td>
+          <td>${escapeHtml(post.author)}</td>
+          <td class="post-date-col">
+            ${(post.publishDate || post.date).replace('T', ' ')}
+            ${statusBadge}
+          </td>
+          <td>
+            <div class="actions-cell">
+              <button class="btn btn-outline btn-sm" onclick="editPost('${post.id}')">Editar</button>
+              <button class="btn btn-danger btn-sm" onclick="deletePost('${post.id}')">Eliminar</button>
+            </div>
+          </td>
+        `;
+        postsListBody.appendChild(tr);
+      });
+    }
+
+    // --- ACTIONS HANDLERS ---
+    btnNewPost.addEventListener('click', () => {
+      showEditor(false);
+    });
+
+    btnCancel.addEventListener('click', () => {
+      showManager();
+    });
+
+    // --- DELETE POST ---
+    window.deletePost = function(id) {
+      if (confirm('¿Estás seguro de que deseas eliminar este post? Esta acción no se puede deshacer.')) {
+        let posts = getStoredPosts();
+        posts = posts.filter(p => p.id !== id);
+        saveStoredPosts(posts);
+        loadPosts();
+      }
+    };
+
+    // --- EDIT POST ---
+    window.editPost = function(id) {
+      const posts = getStoredPosts();
+      const post = posts.find(p => p.id === id);
+      if (!post) return;
+
+      showEditor(true);
+
+      postIdInput.value = post.id;
+      postTitleInput.value = post.title;
+      postSubtitleInput.value = post.subtitle;
+      postAuthorInput.value = post.author;
+      postPublishDateInput.value = post.publishDate || (post.date + "T12:00");
+      
+      if (post.image.startsWith('data:image')) {
+        tempBase64Image = post.image;
+        postImageUrlInput.value = '';
+        document.getElementById('upload-box-text').innerText = "✅ Imagen cargada correctamente";
+      } else {
+        tempBase64Image = '';
+        postImageUrlInput.value = post.image;
+        document.getElementById('upload-box-text').innerText = "📁 Haz clic aquí para subir una imagen";
+      }
+
+      editorBody.innerHTML = post.content;
+      updateLivePreview();
+    };
+
+    // --- FORM SUBMIT (CREATE OR UPDATE) ---
+    postForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const id = postIdInput.value;
+      const title = postTitleInput.value.trim();
+      const subtitle = postSubtitleInput.value.trim();
+      const author = postAuthorInput.value.trim();
+      const publishDate = postPublishDateInput.value;
+      const date = publishDate.split('T')[0];
+      const imageUrl = postImageUrlInput.value.trim();
+      const content = editorBody.innerHTML;
+
+      // Handle image path preference
+      let imagePath = 'assets/images/placeholder_machupicchu.svg'; // Default fallback
+      if (tempBase64Image) {
+        imagePath = tempBase64Image;
+      } else if (imageUrl) {
+        imagePath = imageUrl;
+      }
+
+      const posts = getStoredPosts();
+
+      if (id) {
+        // Edit mode
+        const index = posts.findIndex(p => p.id === id);
+        if (index !== -1) {
+          posts[index].title = title;
+          posts[index].subtitle = subtitle;
+          posts[index].author = author;
+          posts[index].date = date;
+          posts[index].publishDate = publishDate;
+          posts[index].image = imagePath;
+          posts[index].content = content;
+        }
+      } else {
+        // Create mode
+        const newPost = {
+          id: Date.now().toString(),
+          title: title,
+          subtitle: subtitle,
+          author: author,
+          date: date,
+          publishDate: publishDate,
+          image: imagePath,
+          content: content
+        };
+        posts.push(newPost);
+      }
+      saveStoredPosts(posts);
+      showManager();
+      loadPosts();
+    });
+
+    // --- IMAGE HANDLERS ---
+    window.handleImageUpload = function(input) {
+      const file = input.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        tempBase64Image = e.target.result;
+        postImageUrlInput.value = ''; // Clear URL input
+        document.getElementById('upload-box-text').innerText = `✅ ${file.name}`;
+        updateLivePreview();
+      };
+      reader.readAsDataURL(file);
+    };
+
+    window.updatePreviewImageFromUrl = function(url) {
+      if (url.trim()) {
+        tempBase64Image = ''; // Clear local file reference
+        document.getElementById('upload-box-text').innerText = "📁 Haz clic aquí para subir una imagen";
+        updateLivePreview();
+      }
+    };
+
+    // --- LIVE PREVIEW ENGINE ---
+    window.updateLivePreview = function() {
+      const title = postTitleInput.value.trim() || 'Título del post';
+      const subtitle = postSubtitleInput.value.trim() || 'Subtítulo o breve resumen...';
+      const author = postAuthorInput.value.trim() || 'Mónica Carrión';
+
+      previewTitle.innerText = title;
+      previewSubtitle.innerText = subtitle;
+      previewAuthor.innerText = `Por ${author}`;
+
+      let imageSrc = '';
+      if (tempBase64Image) {
+        imageSrc = tempBase64Image;
+      } else if (postImageUrlInput.value.trim()) {
+        imageSrc = postImageUrlInput.value.trim();
+      }
+
+      if (imageSrc) {
+        previewImageContainer.innerHTML = `<img src="${imageSrc}" alt="Preview">`;
+      } else {
+        previewImageContainer.innerHTML = `<span id="preview-placeholder">Sin imagen</span>`;
+      }
+    };
+
+    // Hook listeners for real-time live preview
+    postTitleInput.addEventListener('input', updateLivePreview);
+    postSubtitleInput.addEventListener('input', updateLivePreview);
+    postAuthorInput.addEventListener('input', updateLivePreview);
+
+    // --- RICH TEXT EDITOR ENGINE ---
+    window.formatDoc = function(cmd, value = null) {
+      document.execCommand(cmd, false, value);
+      editorBody.focus();
+    };
+
+    window.formatBlock = function(tag) {
+      document.execCommand('formatBlock', false, tag);
+      editorBody.focus();
+    };
+
+    window.insertLink = function() {
+      const url = prompt("Ingresa la URL del enlace:");
+      if (url) {
+        document.execCommand('createLink', false, url);
+      }
+    };
+
+    window.handleBodyImageUpload = function(input) {
+      const file = input.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        document.execCommand('insertImage', false, e.target.result);
+        input.value = ''; // Reset file input
+      };
+      reader.readAsDataURL(file);
+    };
+
+    window.insertImageUrl = function() {
+      const url = prompt("Ingresa la URL de la imagen a insertar en el cuerpo:");
+      if (url) {
+        document.execCommand('insertImage', false, url);
+      }
+    };
+
+    // Helper to escape HTML characters
+    function escapeHtml(text) {
+      const map = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+      };
+      return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+    }
+  </script>
+</body>
+</html>

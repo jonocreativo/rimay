@@ -581,6 +581,7 @@
       </div>
     </section>
 
+
     <!-- Reservation / Quote Form Section -->
     <section id="reserva" class="section reserva-section">
       <div class="container reserva-container">
@@ -655,6 +656,40 @@
       </div>
     </section>
 
+    <!-- Blog Section (Slider Carousel) -->
+    <section id="blog" class="section">
+      <div class="container">
+        <div class="blog-section-header" style="text-align: center; max-width: 700px; margin: 0 auto 50px auto;">
+          <span class="badge">BITÁCORA DE VIAJE</span>
+          <h2 class="section-title" style="margin-bottom: 20px;">NUESTRO BLOG</h2>
+          <p style="color: var(--text-muted); font-size: 0.95rem;">Relatos, consejos e inspiración para explorar el Perú profundo de manera consciente y pausada.</p>
+        </div>
+
+        <div class="blog-slider-outer">
+          <button class="blog-slider-arrow prev-arrow" id="blog-prev" aria-label="Anterior">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+          </button>
+          
+          <div class="blog-slider-viewport">
+            <div class="blog-slider-track" id="blog-grid-container">
+              <!-- Las tarjetas del blog (máximo 5) se cargarán dinámicamente -->
+            </div>
+          </div>
+
+          <button class="blog-slider-arrow next-arrow" id="blog-next" aria-label="Siguiente">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </button>
+        </div>
+        
+        <!-- Slider indicators/dots -->
+        <div class="blog-slider-dots" id="blog-dots"></div>
+      </div>
+    </section>
+
   </main>
 
   <!-- Footer Section (with Contact columns) -->
@@ -704,9 +739,6 @@
         <ul class="footer-links">
           <li><a href="#">Cusco</a></li>
           <li><a href="#">Machu Picchu</a></li>
-          <li><a href="#">Valle Sagrado</a></li>
-          <li><a href="#">Puno</a></li>
-          <li><a href="#">Más destinos</a></li>
         </ul>
       </div>
 
@@ -720,7 +752,7 @@
               <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
               <circle cx="12" cy="10" r="3"></circle>
             </svg>
-            <span>Arcopata 335, Cusco, Peru</span>
+            <span>Huérfanos 1160, Of. 1102, Santiago, Chile</span>
           </li>
           <li>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
@@ -728,7 +760,7 @@
               <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
               <circle cx="12" cy="10" r="3"></circle>
             </svg>
-            <span>Huérfanos 1160, Of. 1102, Santiago, Chile</span>
+            <span>Arcopata 335, Cusco, Peru</span>
           </li>
           <li>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
@@ -745,7 +777,7 @@
               <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
               <polyline points="22,6 12,13 2,6"></polyline>
             </svg>
-            <span>contactenos@destinoschiletravel.cl</span>
+            <span>viajemos@rimayviajes.cl</span>
           </li>
 
         </ul>
@@ -753,7 +785,7 @@
     </div>
 
     <div class="footer-bottom">
-      <p>© 2024 Rimay Viajes. Todos los derechos reservados. Diseñado con amor en Cusco.</p>
+      <p>© 2024 Rimay Viajes. Todos los derechos reservados. Diseñado con amor en Cusco. | <a href="admin.html" class="footer-admin-link">Acceso Admin</a></p>
     </div>
   </footer>
 
@@ -809,6 +841,61 @@
             <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
           </svg>
         </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Blog Post Reader Modal -->
+  <div id="blog-modal" class="blog-modal-overlay" style="display: none;">
+    <div class="blog-modal-content">
+      <button class="blog-modal-close" id="blog-modal-close" aria-label="Cerrar artículo">&times;</button>
+      <div class="blog-modal-header-img" id="modal-header-img"></div>
+      <div class="blog-modal-body-wrapper">
+        <div class="blog-modal-layout-grid">
+          <!-- Left Column: Article content -->
+          <div class="blog-modal-article-column">
+            <span class="badge" id="modal-badge">BITÁCORA DE VIAJE</span>
+            <h1 class="blog-modal-title" id="modal-title">Título del Post</h1>
+            <div class="blog-modal-meta">
+              <span class="blog-modal-author" id="modal-author">Por Mónica Carrión</span>
+              <span class="blog-modal-date" id="modal-date">Hoy</span>
+            </div>
+            <div class="blog-modal-body" id="modal-body-content">
+              <!-- Contenido enriquecido cargado por JS -->
+            </div>
+          </div>
+          
+          <!-- Right Column: Sidebar -->
+          <aside class="blog-modal-sidebar">
+            <!-- Share buttons -->
+            <div class="sidebar-block">
+              <h4 class="sidebar-title">Compartir</h4>
+              <div class="share-buttons-container">
+                <a href="#" class="share-btn share-wa" id="share-whatsapp" target="_blank" aria-label="Compartir en WhatsApp">
+                  WhatsApp
+                </a>
+                <a href="#" class="share-btn share-fb" id="share-facebook" target="_blank" aria-label="Compartir en Facebook">
+                  Facebook
+                </a>
+                <a href="#" class="share-btn share-tw" id="share-twitter" target="_blank" aria-label="Compartir en Twitter">
+                  Twitter
+                </a>
+                <button class="share-btn share-copy" id="share-copy-link" aria-label="Copiar Enlace">
+                  Copiar Enlace
+                </button>
+                <div id="copy-success-tooltip" class="copy-tooltip" style="display:none;">¡Enlace copiado!</div>
+              </div>
+            </div>
+
+            <!-- Suggested posts -->
+            <div class="sidebar-block">
+              <h4 class="sidebar-title">Artículos Sugeridos</h4>
+              <div class="suggested-posts-container" id="modal-suggested-posts">
+                <!-- Mini cards cargadas dinámicamente -->
+              </div>
+            </div>
+          </aside>
+        </div>
       </div>
     </div>
   </div>

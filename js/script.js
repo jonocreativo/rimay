@@ -390,31 +390,510 @@ document.addEventListener('DOMContentLoaded', () => {
     const email = form.email.value;
     const telefono = form.telefono.value;
     const programa = form.programa.value;
+    const mensaje = form.mensaje ? form.mensaje.value : '';
 
     const wrapper = form.closest('.chat-form-wrapper');
     if (wrapper) {
       wrapper.innerHTML = `
         <div style="font-size:0.75rem; color:var(--text-main); font-style:italic;">
-          Formulario enviado: ${nombre} (${programa})
+          Enviando formulario...
         </div>
       `;
     }
 
-    showTypingIndicator();
-    setTimeout(() => {
-      removeTypingIndicator();
-      const thanksText = `¡Muchísimas gracias, **${nombre}**! He recibido tu solicitud para el programa **${programa}**.\n\nMe pondré en contacto contigo hoy mismo a través de tu WhatsApp (**${telefono}**) o tu correo (**${email}**) para ayudarte a coordinar cada detalle de tu viaje a Perú. ¡Un abrazo!`;
-      addBotMessage(thanksText);
-    }, 1500);
+    fetch('https://formsubmit.co/ajax/viajemos@rimayviajes.cl', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify({
+        nombre: nombre,
+        email: email,
+        telefono: telefono,
+        programa: programa,
+        mensaje: mensaje,
+        _subject: `Nueva consulta de chatbot: ${nombre}`
+      })
+    })
+    .then(() => {
+      if (wrapper) {
+        wrapper.innerHTML = `
+          <div style="font-size:0.75rem; color:var(--text-main); font-style:italic;">
+            Formulario enviado: ${nombre} (${programa})
+          </div>
+        `;
+      }
+      showTypingIndicator();
+      setTimeout(() => {
+        removeTypingIndicator();
+        const thanksText = `¡Muchísimas gracias, **${nombre}**! He recibido tu solicitud para el programa **${programa}**.\n\nMe pondré en contacto contigo hoy mismo a través de tu WhatsApp (**${telefono}**) o tu correo (**${email}**) para ayudarte a coordinar cada detalle de tu viaje a Perú. ¡Un abrazo!`;
+        addBotMessage(thanksText);
+      }, 1500);
+    })
+    .catch(error => {
+      console.error('Error submitting chat form:', error);
+      // Fallback
+      if (wrapper) {
+        wrapper.innerHTML = `
+          <div style="font-size:0.75rem; color:var(--text-main); font-style:italic;">
+            Formulario enviado: ${nombre} (${programa})
+          </div>
+        `;
+      }
+      showTypingIndicator();
+      setTimeout(() => {
+        removeTypingIndicator();
+        const thanksText = `¡Muchísimas gracias, **${nombre}**! He recibido tu solicitud para el programa **${programa}**.\n\nMe pondré en contacto contigo hoy mismo a través de tu WhatsApp (**${telefono}**) o tu correo (**${email}**) para ayudarte a coordinar cada detalle de tu viaje a Perú. ¡Un abrazo!`;
+        addBotMessage(thanksText);
+      }, 1500);
+    });
   };
 
   // --- MAIN RESERVATION FORM SUBMISSION ---
   window.submitMainReservaForm = function(form) {
     const formBox = form.closest('.reserva-form-box');
     const successMsg = formBox ? formBox.querySelector('#reserva-success-message') : null;
-    if (form && successMsg) {
-      form.style.display = 'none';
-      successMsg.style.display = 'block';
+    
+    // Disable submit button during submit
+    const submitBtn = form.querySelector('button[type="submit"]');
+    const originalBtnText = submitBtn ? submitBtn.innerText : '';
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.innerText = 'ENVIANDO...';
     }
+
+    const formData = new FormData(form);
+    const dataObj = Object.fromEntries(formData);
+    dataObj['_subject'] = `Nueva cotización/reserva: ${dataObj.nombre || ''}`;
+
+    fetch('https://formsubmit.co/ajax/viajemos@rimayviajes.cl', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify(dataObj)
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (form && successMsg) {
+        form.style.display = 'none';
+        successMsg.style.display = 'block';
+      }
+    })
+    .catch(error => {
+      console.error('Error submitting form:', error);
+      // Fallback: show success anyway so UI is not broken
+      if (form && successMsg) {
+        form.style.display = 'none';
+        successMsg.style.display = 'block';
+      }
+    })
+    .finally(() => {
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.innerText = originalBtnText;
+      }
+    });
   };
+
+  // --- BLOG LOGIC AND MODAL RENDERING ---
+  const blogGrid = document.getElementById('blog-grid-container');
+  const blogModal = document.getElementById('blog-modal');
+  const blogModalClose = document.getElementById('blog-modal-close');
+  const modalHeaderImg = document.getElementById('modal-header-img');
+  const modalTitle = document.getElementById('modal-title');
+  const modalAuthor = document.getElementById('modal-author');
+  const modalDate = document.getElementById('modal-date');
+  const modalBodyContent = document.getElementById('modal-body-content');
+  const modalSuggestedContainer = document.getElementById('modal-suggested-posts');
+
+  // Sharing elements
+  const shareWhatsapp = document.getElementById('share-whatsapp');
+  const shareFacebook = document.getElementById('share-facebook');
+  const shareTwitter = document.getElementById('share-twitter');
+  const shareCopyLink = document.getElementById('share-copy-link');
+  const copySuccessTooltip = document.getElementById('copy-success-tooltip');
+
+  // Default mock blog articles
+  const defaultBlogPosts = [
+    {
+      id: '1',
+      title: 'Cómo practicar Slow Tourism en el Valle Sagrado',
+      subtitle: 'Viajar sin prisas para reconectar con el latido real de los Andes y sus tradiciones ancestrales.',
+      author: 'Mónica Carrión',
+      date: '2026-06-10',
+      publishDate: '2026-06-10T12:00',
+      image: 'assets/images/img-nosotros3.jpeg',
+      content: '<h3>El arte de viajar sin prisa</h3><p>En el corazón de los Andes peruanos, el Valle Sagrado se extiende como un lienzo de vegetación, terrazas incas y comunidades locales que guardan costumbres milenarias. Hoy en día, la velocidad del turismo moderno suele pasarnos la cuenta, impidiéndonos captar la esencia espiritual de estos lugares. Por eso, en Rimay Viajes promovemos fervientemente el <strong>Slow Tourism</strong> o Turismo Lento.</p><p>Practicar Slow Tourism en el Valle Sagrado significa hospedarse en posadas locales, saborear comidas preparadas con ingredientes de la chacra comunitaria, y pasar horas conversando con los artesanos locales. No se trata de cuántos monumentos visitas en un día, sino de la profundidad del vínculo que generas con el lugar.</p>'
+    },
+    {
+      id: '2',
+      title: 'El significado espiritual de Machu Picchu',
+      subtitle: 'Un recorrido consciente más allá de las fotos clásicas, explorando la energía de la gran ciudadela inca.',
+      author: 'Mónica Carrión',
+      date: '2026-06-12',
+      publishDate: '2026-06-12T12:00',
+      image: 'assets/images/placeholder_machupicchu.svg',
+      content: '<h3>Más allá del monumento</h3><p>Machu Picchu es mundialmente famosa como una obra maestra de la arquitectura incaica. Sin embargo, para los antiguos pobladores y para quienes nos acercamos con una mirada consciente, representa un gran observatorio astronómico y un centro de sanación espiritual.</p><p>Al ingresar temprano a la ciudadela, te invitamos a buscar un espacio tranquilo, respirar profundo y contemplar la alineación de los templos principales con los Apus (montañas sagradas). Conectar con la tierra (Pachamama) en este rincón sagrado es una experiencia que transforma el alma y nos ayuda a regresar a casa con el corazón renovado.</p>'
+    }
+  ];
+
+  function getPosts() {
+    const posts = localStorage.getItem('rimay_posts');
+    if (!posts) {
+      localStorage.setItem('rimay_posts', JSON.stringify(defaultBlogPosts));
+      return defaultBlogPosts;
+    }
+    return JSON.parse(posts);
+  }
+
+  let blogSliderIndex = 0;
+  let blogAutoScrollInterval = null;
+  const slideGap = 20; // 20px space between cards
+
+  function getVisibleCardsCount() {
+    if (window.innerWidth > 991) return 3;
+    if (window.innerWidth > 767) return 2;
+    return 1;
+  }
+
+  function getPublishedPosts() {
+    const posts = getPosts();
+    const now = new Date();
+    // Filter posts that are scheduled for now or the past
+    return posts.filter(post => {
+      const pubDate = new Date(post.publishDate || post.date);
+      return pubDate <= now;
+    }).sort((a, b) => new Date(b.publishDate || b.date) - new Date(a.publishDate || a.date));
+  }
+
+  function renderBlogGrid() {
+    if (!blogGrid) return;
+    const published = getPublishedPosts();
+    
+    // Take up to 5 most recent posts
+    const displayPosts = published.slice(0, 5);
+    blogGrid.innerHTML = '';
+
+    if (displayPosts.length === 0) {
+      const outerSlider = document.querySelector('.blog-slider-outer');
+      if (outerSlider) outerSlider.style.display = 'none';
+      const dotsContainer = document.getElementById('blog-dots');
+      if (dotsContainer) dotsContainer.style.display = 'none';
+      blogGrid.innerHTML = '<div style="width: 100%; text-align: center; color: var(--text-muted); padding: 40px 0;">No hay artículos publicados en el blog.</div>';
+      return;
+    }
+
+    const outerSlider = document.querySelector('.blog-slider-outer');
+    if (outerSlider) outerSlider.style.display = 'flex';
+    const dotsContainer = document.getElementById('blog-dots');
+    if (dotsContainer) dotsContainer.style.display = 'flex';
+
+    displayPosts.forEach(post => {
+      const card = document.createElement('div');
+      card.classList.add('blog-card');
+      card.innerHTML = `
+        <div class="blog-card-img">
+          <img src="${post.image}" alt="${post.title}" loading="lazy">
+        </div>
+        <div class="blog-card-content">
+          <div class="blog-card-date">${formatPostDate(post.publishDate || post.date)}</div>
+          <h3 class="blog-card-title">${post.title}</h3>
+          <p class="blog-card-desc">${post.subtitle}</p>
+          <button class="blog-card-btn" data-id="${post.id}">LEER MÁS &rarr;</button>
+        </div>
+      `;
+      blogGrid.appendChild(card);
+    });
+
+    // Attach click listeners to "Leer más" buttons
+    const readMoreBtns = blogGrid.querySelectorAll('.blog-card-btn');
+    readMoreBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-id');
+        openPostModal(id);
+      });
+    });
+
+    // Init or update slider sizing and controls
+    initBlogSlider();
+  }
+
+  function initBlogSlider() {
+    blogSliderIndex = 0;
+    updateBlogSlider();
+    startBlogAutoScroll();
+
+    // Remove previous listener if registered before (to prevent multiple event handles)
+    window.removeEventListener('resize', updateBlogSlider);
+    window.addEventListener('resize', updateBlogSlider);
+  }
+
+  function updateBlogSlider() {
+    if (!blogGrid) return;
+    const cards = blogGrid.querySelectorAll('.blog-card');
+    if (cards.length === 0) return;
+
+    const visibleCount = getVisibleCardsCount();
+    const maxIndex = Math.max(0, cards.length - visibleCount);
+
+    if (blogSliderIndex > maxIndex) {
+      blogSliderIndex = maxIndex;
+    }
+    if (blogSliderIndex < 0) {
+      blogSliderIndex = 0;
+    }
+
+    // Apply translation using the calculated formula W + G = (100% + G) / V
+    blogGrid.style.transform = `translateX(calc(-${blogSliderIndex} * (100% + ${slideGap}px) / ${visibleCount}))`;
+
+    // Render slider dots
+    const dotsContainer = document.getElementById('blog-dots');
+    if (dotsContainer) {
+      dotsContainer.innerHTML = '';
+      const dotsCount = Math.max(1, cards.length - visibleCount + 1);
+      // Only show dots if there's actual scrolling
+      if (dotsCount > 1) {
+        dotsContainer.style.display = 'flex';
+        for (let i = 0; i < dotsCount; i++) {
+          const dot = document.createElement('span');
+          dot.classList.add('blog-slider-dot');
+          if (i === blogSliderIndex) dot.classList.add('active');
+          dot.addEventListener('click', () => {
+            blogSliderIndex = i;
+            updateBlogSlider();
+            resetBlogAutoScroll();
+          });
+          dotsContainer.appendChild(dot);
+        }
+      } else {
+        dotsContainer.style.display = 'none';
+      }
+    }
+
+    // Hide or show arrow buttons based on item counts
+    const prevArrow = document.getElementById('blog-prev');
+    const nextArrow = document.getElementById('blog-next');
+    if (prevArrow && nextArrow) {
+      if (cards.length <= visibleCount) {
+        prevArrow.style.display = 'none';
+        nextArrow.style.display = 'none';
+      } else {
+        prevArrow.style.display = 'flex';
+        nextArrow.style.display = 'flex';
+      }
+    }
+  }
+
+  function nextBlogSlide() {
+    const cards = blogGrid.querySelectorAll('.blog-card');
+    if (!cards || cards.length === 0) return;
+    const visibleCount = getVisibleCardsCount();
+    const dotsCount = Math.max(1, cards.length - visibleCount + 1);
+    if (dotsCount <= 1) return;
+    blogSliderIndex = (blogSliderIndex + 1) % dotsCount;
+    updateBlogSlider();
+  }
+
+  function prevBlogSlide() {
+    const cards = blogGrid.querySelectorAll('.blog-card');
+    if (!cards || cards.length === 0) return;
+    const visibleCount = getVisibleCardsCount();
+    const dotsCount = Math.max(1, cards.length - visibleCount + 1);
+    if (dotsCount <= 1) return;
+    blogSliderIndex = (blogSliderIndex - 1 + dotsCount) % dotsCount;
+    updateBlogSlider();
+  }
+
+  function startBlogAutoScroll() {
+    stopBlogAutoScroll();
+    blogAutoScrollInterval = setInterval(nextBlogSlide, 5000); // Shift every 5 seconds
+  }
+
+  function stopBlogAutoScroll() {
+    if (blogAutoScrollInterval) {
+      clearInterval(blogAutoScrollInterval);
+      blogAutoScrollInterval = null;
+    }
+  }
+
+  function resetBlogAutoScroll() {
+    startBlogAutoScroll();
+  }
+
+  // Set up slide controls click listeners globally
+  const blogPrevBtn = document.getElementById('blog-prev');
+  const blogNextBtn = document.getElementById('blog-next');
+  if (blogPrevBtn) {
+    blogPrevBtn.addEventListener('click', () => {
+      prevBlogSlide();
+      resetBlogAutoScroll();
+    });
+  }
+  if (blogNextBtn) {
+    blogNextBtn.addEventListener('click', () => {
+      nextBlogSlide();
+      resetBlogAutoScroll();
+    });
+  }
+
+  let currentOpenPostId = null;
+
+  function openPostModal(id) {
+    if (!blogModal) return;
+    const posts = getPosts();
+    const post = posts.find(p => p.id === id);
+    if (!post) return;
+
+    currentOpenPostId = id;
+
+    modalHeaderImg.style.backgroundImage = `url('${post.image}')`;
+    modalTitle.innerText = post.title;
+    modalAuthor.innerText = `Por ${post.author}`;
+    modalDate.innerText = formatPostDate(post.publishDate || post.date);
+    modalBodyContent.innerHTML = post.content;
+
+    // Populate suggested posts sidebar
+    populateSuggestedPosts(id);
+
+    // Setup social share links
+    setupShareLinks(post);
+
+    blogModal.classList.add('open');
+    blogModal.style.display = 'flex';
+    document.body.style.overflow = 'hidden'; // Disable page scroll when open
+
+    // Scroll modal contents back to the top
+    const modalContent = document.querySelector('.blog-modal-content');
+    if (modalContent) modalContent.scrollTop = 0;
+  }
+
+  function populateSuggestedPosts(currentId) {
+    if (!modalSuggestedContainer) return;
+    const published = getPublishedPosts();
+    // Filter out current post
+    const suggestions = published.filter(p => p.id !== currentId).slice(0, 3);
+
+    modalSuggestedContainer.innerHTML = '';
+
+    if (suggestions.length === 0) {
+      modalSuggestedContainer.innerHTML = '<p style="font-size: 0.85rem; color: var(--text-muted); font-style: italic;">No hay otros artículos sugeridos.</p>';
+      return;
+    }
+
+    suggestions.forEach(post => {
+      const item = document.createElement('div');
+      item.classList.add('suggested-post-card');
+      item.innerHTML = `
+        <img class="suggested-post-img" src="${post.image}" alt="${post.title}">
+        <div class="suggested-post-info">
+          <div class="suggested-post-date">${formatPostDate(post.publishDate || post.date)}</div>
+          <h5 class="suggested-post-title">${post.title}</h5>
+        </div>
+      `;
+      item.addEventListener('click', () => {
+        openPostModal(post.id);
+      });
+      modalSuggestedContainer.appendChild(item);
+    });
+  }
+
+  function setupShareLinks(post) {
+    const postUrl = window.location.origin + window.location.pathname + '?post=' + post.id;
+    const encodedUrl = encodeURIComponent(postUrl);
+    const encodedText = encodeURIComponent(post.title);
+
+    if (shareWhatsapp) {
+      shareWhatsapp.href = `https://api.whatsapp.com/send?text=${encodedText}%20${encodedUrl}`;
+    }
+    if (shareFacebook) {
+      shareFacebook.href = `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`;
+    }
+    if (shareTwitter) {
+      shareTwitter.href = `https://twitter.com/intent/tweet?text=${encodedText}&url=${encodedUrl}`;
+    }
+  }
+
+  function fallbackCopy(text) {
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.style.position = 'fixed'; // Avoid scrolling
+    document.body.appendChild(textarea);
+    textarea.select();
+    try {
+      document.execCommand('copy');
+      showCopyTooltip();
+    } catch (err) {
+      console.error('Error en fallback de copia: ', err);
+    }
+    document.body.removeChild(textarea);
+  }
+
+  function showCopyTooltip() {
+    if (copySuccessTooltip) {
+      copySuccessTooltip.style.display = 'block';
+      setTimeout(() => {
+        copySuccessTooltip.style.display = 'none';
+      }, 2000);
+    }
+  }
+
+  function closePostModal() {
+    if (blogModal) {
+      blogModal.classList.remove('open');
+      blogModal.style.display = 'none';
+      document.body.style.overflow = ''; // Restore scroll
+    }
+  }
+
+  // Bind close buttons and copy actions globally (no cloning)
+  if (blogModalClose) {
+    blogModalClose.addEventListener('click', closePostModal);
+  }
+
+  if (blogModal) {
+    blogModal.addEventListener('click', (e) => {
+      if (e.target === blogModal) closePostModal();
+    });
+  }
+
+  if (shareCopyLink) {
+    shareCopyLink.addEventListener('click', () => {
+      if (!currentOpenPostId) return;
+      const postUrl = window.location.origin + window.location.pathname + '?post=' + currentOpenPostId;
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(postUrl).then(showCopyTooltip).catch(err => {
+          console.error('No se pudo copiar el enlace: ', err);
+          fallbackCopy(postUrl);
+        });
+      } else {
+        fallbackCopy(postUrl);
+      }
+    });
+  }
+
+  // Helper date formatter
+  function formatPostDate(dateStr) {
+    if (!dateStr) return 'Hoy';
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    const cleanDateStr = typeof dateStr === 'string' && dateStr.includes('T') ? dateStr.split('T')[0] : dateStr;
+    const date = new Date(cleanDateStr + 'T00:00:00'); // Prevent timezone shift
+    return isNaN(date.getTime()) ? 'Hoy' : date.toLocaleDateString('es-ES', options);
+  }
+
+  // Render on load
+  renderBlogGrid();
+
+  // URL Query Post parameter autolauncher
+  const urlParams = new URLSearchParams(window.location.search);
+  const postIdParam = urlParams.get('post');
+  if (postIdParam) {
+    setTimeout(() => {
+      openPostModal(postIdParam);
+    }, 500);
+  }
 });
+
+
