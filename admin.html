@@ -808,7 +808,7 @@
         date: '2026-06-10',
         publishDate: '2026-06-10T12:00',
         image: 'assets/images/img-nosotros3.jpeg',
-        content: '<h3>El arte de viajar sin prisa</h3><p>En el corazón de los Andes peruanos, el Valle Sagrado se extiende como un lienzo de vegetación, terrazas incas y comunidades locales que guardan costumbres milenarias. Hoy en día, la velocidad del turismo moderno suele pasarnos la cuenta, impidiéndonos captar la esencia espiritual de estos lugares. Por eso, en Rimay Viajes promovemos fervientemente el <strong>Slow Tourism</strong> o Turismo Lento.</p><p>Practicar Slow Tourism en el Valle Sagrado significa hospedarse en posadas locales, saborear comidas preparadas con ingredientes de la chacra comunitaria, y pasar horas conversando con los artesanos locales. No se trata de cuántos monumentos visitas en un día, sino de la profundidad del vínculo que generas con el lugar.</p>'
+        content: '<h3>El arte de viajar sin prisa</h3><p>En el corazón de los Andes peruanos, el Valle Sagrado se extiende como un lienzo de vegetación, terrazas incas y comunidades locales que guardan costumbres milenarias. Hoy en día, la velocidad del turismo moderno suele pasarnos la cuenta, impidiendo nos captar la esencia espiritual de estos lugares. Por eso, en Rimay Viajes promovemos fervientemente el <strong>Slow Tourism</strong> o Turismo Lento.</p><p>Practicar Slow Tourism en el Valle Sagrado significa hospedarse en posadas locales, saborear comidas preparadas con ingredientes de la chacra comunitaria, y pasar horas conversando con los artesanos locales. No se trata de cuántos monumentos visitas en un día, sino de la profundidad del vínculo que generas con el lugar.</p>'
       },
       {
         id: '2',
@@ -819,6 +819,16 @@
         publishDate: '2026-06-12T12:00',
         image: 'assets/images/placeholder_machupicchu.svg',
         content: '<h3>Más allá del monumento</h3><p>Machu Picchu es mundialmente famosa como una obra maestra de la arquitectura incaica. Sin embargo, para los antiguos pobladores y para quienes nos acercamos con una mirada consciente, representa un gran observatorio astronómico y un centro de sanación espiritual.</p><p>Al ingresar temprano a la ciudadela, te invitamos a buscar un espacio tranquilo, respirar profundo y contemplar la alineación de los templos principales con los Apus (montañas sagradas). Conectar con la tierra (Pachamama) en este rincón sagrado es una experiencia que transforma el alma y nos ayuda a regresar a casa con el corazón renovado.</p>'
+      },
+      {
+        id: '3',
+        title: 'Gastronomía con Sentido: El renacer de los sabores andinos',
+        subtitle: 'Descubre cómo la cocina local en Cusco conecta la tierra, las comunidades campesinas y tu paladar.',
+        author: 'Mónica Carrión',
+        date: '2026-06-15',
+        publishDate: '2026-06-15T12:00',
+        image: 'assets/images/img-nosotros2.jpeg',
+        content: '<h3>Sabores que cuentan historias</h3><p>La cocina peruana es famosa en todo el mundo, pero en las tierras altas de Cusco, la comida tiene un significado aún más profundo: es un puente directo con la Pachamama (Madre Tierra) y con las comunidades que la cultivan con amor y respeto ancestral.</p><p>En Rimay Viajes creemos que alimentar el cuerpo es también alimentar el espíritu. Por eso, en nuestras experiencias gastronómicas invitamos a los viajeros a participar en la preparación de una tradicional <strong>Pachamanca</strong>, cocida bajo tierra con piedras calientes, o a degustar variedades únicas de papas nativas, quinua orgánica y hierbas aromáticas locales cosechadas el mismo día. Cada bocado no solo es una explosión de sabor, sino también un acto de apoyo al comercio justo y al desarrollo sostenible de las comunidades andinas.</p>'
       }
     ];
 
@@ -854,10 +864,28 @@
               });
           } else {
             cachedPosts = [];
+            const docIdsInDb = [];
             snapshot.forEach(doc => {
+              docIdsInDb.push(doc.id);
               cachedPosts.push(doc.data());
             });
-            renderPostsTable(cachedPosts);
+
+            // Seed missing default sample post 3 automatically if it's not present
+            if (!docIdsInDb.includes('3')) {
+              console.log("Seeding missing default sample post 3...");
+              const post3 = defaultBlogPosts.find(p => p.id === '3');
+              db.collection('posts').doc('3').set(post3)
+                .then(() => {
+                  cachedPosts.push(post3);
+                  renderPostsTable(cachedPosts);
+                })
+                .catch(err => {
+                  console.error("Error seeding post 3 in admin:", err);
+                  renderPostsTable(cachedPosts);
+                });
+            } else {
+              renderPostsTable(cachedPosts);
+            }
           }
         })
         .catch(err => {
