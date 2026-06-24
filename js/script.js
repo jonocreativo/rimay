@@ -364,7 +364,6 @@ document.addEventListener('DOMContentLoaded', () => {
   function addReservationForm() {
     const formDiv = document.createElement('div');
     formDiv.classList.add('chat-msg', 'bot', 'chat-form-wrapper');
-    formDiv.style.width = '85%';
     formDiv.innerHTML = `
       <form class="chat-form" onsubmit="event.preventDefault(); window.submitChatForm(this);">
         <input type="text" placeholder="Nombre completo" required name="nombre">
