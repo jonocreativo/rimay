@@ -558,13 +558,66 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   ];
 
+  let cachedBlogPosts = [];
+
   function getPosts() {
-    const posts = localStorage.getItem('rimay_posts');
-    if (!posts) {
-      localStorage.setItem('rimay_posts', JSON.stringify(defaultBlogPosts));
-      return defaultBlogPosts;
+    return cachedBlogPosts;
+  }
+
+  function initBlogPosts() {
+    if (typeof db === 'undefined') {
+      console.warn("Firebase db not initialized, falling back to local defaults");
+      cachedBlogPosts = defaultBlogPosts;
+      renderBlogGrid();
+      checkUrlQueryParam();
+      return;
     }
-    return JSON.parse(posts);
+
+    db.collection('posts').get()
+      .then(snapshot => {
+        if (snapshot.empty) {
+          console.log("Firestore posts collection is empty. Seeding defaults...");
+          const promises = defaultBlogPosts.map(post => {
+            return db.collection('posts').doc(post.id).set(post);
+          });
+          Promise.all(promises)
+            .then(() => {
+              console.log("Database seeded successfully.");
+              cachedBlogPosts = defaultBlogPosts;
+              renderBlogGrid();
+              checkUrlQueryParam();
+            })
+            .catch(err => {
+              console.error("Error seeding defaults:", err);
+              cachedBlogPosts = defaultBlogPosts;
+              renderBlogGrid();
+              checkUrlQueryParam();
+            });
+        } else {
+          cachedBlogPosts = [];
+          snapshot.forEach(doc => {
+            cachedBlogPosts.push(doc.data());
+          });
+          renderBlogGrid();
+          checkUrlQueryParam();
+        }
+      })
+      .catch(err => {
+        console.error("Error fetching posts from Firestore:", err);
+        cachedBlogPosts = defaultBlogPosts;
+        renderBlogGrid();
+        checkUrlQueryParam();
+      });
+  }
+
+  function checkUrlQueryParam() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const postIdParam = urlParams.get('post');
+    if (postIdParam) {
+      setTimeout(() => {
+        openPostModal(postIdParam);
+      }, 500);
+    }
   }
 
   let blogSliderIndex = 0;
@@ -901,17 +954,8 @@ document.addEventListener('DOMContentLoaded', () => {
     return isNaN(date.getTime()) ? 'Hoy' : date.toLocaleDateString('es-ES', options);
   }
 
-  // Render on load
-  renderBlogGrid();
-
-  // URL Query Post parameter autolauncher
-  const urlParams = new URLSearchParams(window.location.search);
-  const postIdParam = urlParams.get('post');
-  if (postIdParam) {
-    setTimeout(() => {
-      openPostModal(postIdParam);
-    }, 500);
-  }
+  // Render on load: fetch from Firestore first
+  initBlogPosts();
 });
 
 

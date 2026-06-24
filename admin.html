@@ -8,6 +8,11 @@
   <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
   
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+  
   <style>
     :root {
       --primary-dark: #2c3e2d;
@@ -790,50 +795,79 @@
       }
     }
 
-    // --- LOCALSTORAGE DATA MANAGEMENT ---
-    function getStoredPosts() {
-      const posts = localStorage.getItem('rimay_posts');
-      return posts ? JSON.parse(posts) : [];
-    }
+    // --- FIRESTORE / LOCALSTORAGE DATA MANAGEMENT ---
+    let cachedPosts = [];
 
-    function saveStoredPosts(posts) {
-      localStorage.setItem('rimay_posts', JSON.stringify(posts));
-    }
-
-    // --- DOCK DEFAULT POSTS IF STORAGE IS EMPTY ---
-    function checkAndInitDefaultPosts() {
-      let posts = getStoredPosts();
-      if (posts.length === 0) {
-        posts = [
-          {
-            id: '1',
-            title: 'Cómo practicar Slow Tourism en el Valle Sagrado',
-            subtitle: 'Viajar sin prisas para reconectar con el latido real de los Andes y sus tradiciones ancestrales.',
-            author: 'Mónica Carrión',
-            date: '2026-06-10',
-            publishDate: '2026-06-10T12:00',
-            image: 'assets/images/img-nosotros3.jpeg',
-            content: '<h3>El arte de viajar sin prisa</h3><p>En el corazón de los Andes peruanos, el Valle Sagrado se extiende como un lienzo de vegetación, terrazas incas y comunidades locales que guardan costumbres milenarias. Hoy en día, la velocidad del turismo moderno suele pasarnos la cuenta, impidiéndonos captar la esencia espiritual de estos lugares. Por eso, en Rimay Viajes promovemos fervientemente el <strong>Slow Tourism</strong> o Turismo Lento.</p><p>Practicar Slow Tourism en el Valle Sagrado significa hospedarse en posadas locales, saborear comidas preparadas con ingredientes de la chacra comunitaria, y pasar horas conversando con los artesanos locales. No se trata de cuántos monumentos visitas en un día, sino de la profundidad del vínculo que generas con el lugar.</p>'
-          },
-          {
-            id: '2',
-            title: 'El significado espiritual de Machu Picchu',
-            subtitle: 'Un recorrido consciente más allá de las fotos clásicas, explorando la energía de la gran ciudadela inca.',
-            author: 'Mónica Carrión',
-            date: '2026-06-12',
-            publishDate: '2026-06-12T12:00',
-            image: 'assets/images/placeholder_machupicchu.svg',
-            content: '<h3>Más allá del monumento</h3><p>Machu Picchu es mundialmente famosa como una obra maestra de la arquitectura incaica. Sin embargo, para los antiguos pobladores y para quienes nos acercamos con una mirada consciente, representa un gran observatorio astronómico y un centro de sanación espiritual.</p><p>Al ingresar temprano a la ciudadela, te invitamos a buscar un espacio tranquilo, respirar profundo y contemplar la alineación de los templos principales con los Apus (montañas sagradas). Conectar con la tierra (Pachamama) en este rincón sagrado es una experiencia que transforma el alma y nos ayuda a regresar a casa con el corazón renovado.</p>'
-          }
-        ];
-        saveStoredPosts(posts);
+    // Default mock blog articles
+    const defaultBlogPosts = [
+      {
+        id: '1',
+        title: 'Cómo practicar Slow Tourism en el Valle Sagrado',
+        subtitle: 'Viajar sin prisas para reconectar con el latido real de los Andes y sus tradiciones ancestrales.',
+        author: 'Mónica Carrión',
+        date: '2026-06-10',
+        publishDate: '2026-06-10T12:00',
+        image: 'assets/images/img-nosotros3.jpeg',
+        content: '<h3>El arte de viajar sin prisa</h3><p>En el corazón de los Andes peruanos, el Valle Sagrado se extiende como un lienzo de vegetación, terrazas incas y comunidades locales que guardan costumbres milenarias. Hoy en día, la velocidad del turismo moderno suele pasarnos la cuenta, impidiéndonos captar la esencia espiritual de estos lugares. Por eso, en Rimay Viajes promovemos fervientemente el <strong>Slow Tourism</strong> o Turismo Lento.</p><p>Practicar Slow Tourism en el Valle Sagrado significa hospedarse en posadas locales, saborear comidas preparadas con ingredientes de la chacra comunitaria, y pasar horas conversando con los artesanos locales. No se trata de cuántos monumentos visitas en un día, sino de la profundidad del vínculo que generas con el lugar.</p>'
+      },
+      {
+        id: '2',
+        title: 'El significado espiritual de Machu Picchu',
+        subtitle: 'Un recorrido consciente más allá de las fotos clásicas, explorando la energía de la gran ciudadela inca.',
+        author: 'Mónica Carrión',
+        date: '2026-06-12',
+        publishDate: '2026-06-12T12:00',
+        image: 'assets/images/placeholder_machupicchu.svg',
+        content: '<h3>Más allá del monumento</h3><p>Machu Picchu es mundialmente famosa como una obra maestra de la arquitectura incaica. Sin embargo, para los antiguos pobladores y para quienes nos acercamos con una mirada consciente, representa un gran observatorio astronómico y un centro de sanación espiritual.</p><p>Al ingresar temprano a la ciudadela, te invitamos a buscar un espacio tranquilo, respirar profundo y contemplar la alineación de los templos principales con los Apus (montañas sagradas). Conectar con la tierra (Pachamama) en este rincón sagrado es una experiencia que transforma el alma y nos ayuda a regresar a casa con el corazón renovado.</p>'
       }
-      return posts;
+    ];
+
+    function getLocalStoragePosts() {
+      const posts = localStorage.getItem('rimay_posts');
+      return posts ? JSON.parse(posts) : [...defaultBlogPosts];
     }
 
     // --- LOAD POSTS IN TABLE ---
     function loadPosts() {
-      const posts = checkAndInitDefaultPosts();
+      if (typeof db === 'undefined') {
+        console.warn("Firebase db not initialized, falling back to local storage");
+        cachedPosts = getLocalStoragePosts();
+        renderPostsTable(cachedPosts);
+        return;
+      }
+
+      db.collection('posts').get()
+        .then(snapshot => {
+          if (snapshot.empty) {
+            console.log("Firestore posts collection is empty. Seeding defaults...");
+            const promises = defaultBlogPosts.map(post => {
+              return db.collection('posts').doc(post.id).set(post);
+            });
+            Promise.all(promises)
+              .then(() => {
+                cachedPosts = [...defaultBlogPosts];
+                renderPostsTable(cachedPosts);
+              })
+              .catch(err => {
+                console.error("Error seeding defaults:", err);
+                renderPostsTable(defaultBlogPosts);
+              });
+          } else {
+            cachedPosts = [];
+            snapshot.forEach(doc => {
+              cachedPosts.push(doc.data());
+            });
+            renderPostsTable(cachedPosts);
+          }
+        })
+        .catch(err => {
+          console.error("Error loading posts from Firestore:", err);
+          cachedPosts = getLocalStoragePosts();
+          renderPostsTable(cachedPosts);
+        });
+    }
+
+    function renderPostsTable(posts) {
       postsListBody.innerHTML = '';
 
       if (posts.length === 0) {
@@ -884,17 +918,32 @@
     // --- DELETE POST ---
     window.deletePost = function(id) {
       if (confirm('¿Estás seguro de que deseas eliminar este post? Esta acción no se puede deshacer.')) {
-        let posts = getStoredPosts();
-        posts = posts.filter(p => p.id !== id);
-        saveStoredPosts(posts);
-        loadPosts();
+        if (typeof db !== 'undefined') {
+          db.collection('posts').doc(id).delete()
+            .then(() => {
+              console.log("Post deleted from Firestore");
+              loadPosts();
+            })
+            .catch(err => {
+              console.error("Error deleting post from Firestore:", err);
+              // Fallback local storage delete
+              let posts = getLocalStoragePosts();
+              posts = posts.filter(p => p.id !== id);
+              localStorage.setItem('rimay_posts', JSON.stringify(posts));
+              loadPosts();
+            });
+        } else {
+          let posts = getLocalStoragePosts();
+          posts = posts.filter(p => p.id !== id);
+          localStorage.setItem('rimay_posts', JSON.stringify(posts));
+          loadPosts();
+        }
       }
     };
 
     // --- EDIT POST ---
     window.editPost = function(id) {
-      const posts = getStoredPosts();
-      const post = posts.find(p => p.id === id);
+      const post = cachedPosts.find(p => p.id === id) || getLocalStoragePosts().find(p => p.id === id);
       if (!post) return;
 
       showEditor(true);
@@ -923,7 +972,7 @@
     postForm.addEventListener('submit', (e) => {
       e.preventDefault();
 
-      const id = postIdInput.value;
+      const id = postIdInput.value || Date.now().toString();
       const title = postTitleInput.value.trim();
       const subtitle = postSubtitleInput.value.trim();
       const author = postAuthorInput.value.trim();
@@ -940,38 +989,48 @@
         imagePath = imageUrl;
       }
 
-      const posts = getStoredPosts();
+      const postData = {
+        id: id,
+        title: title,
+        subtitle: subtitle,
+        author: author,
+        date: date,
+        publishDate: publishDate,
+        image: imagePath,
+        content: content
+      };
 
-      if (id) {
-        // Edit mode
-        const index = posts.findIndex(p => p.id === id);
-        if (index !== -1) {
-          posts[index].title = title;
-          posts[index].subtitle = subtitle;
-          posts[index].author = author;
-          posts[index].date = date;
-          posts[index].publishDate = publishDate;
-          posts[index].image = imagePath;
-          posts[index].content = content;
-        }
+      if (typeof db !== 'undefined') {
+        db.collection('posts').doc(id).set(postData)
+          .then(() => {
+            console.log("Post saved to Firestore");
+            showManager();
+            loadPosts();
+          })
+          .catch(err => {
+            console.error("Error saving post to Firestore:", err);
+            // Fallback local storage save
+            savePostLocally(postData);
+            showManager();
+            loadPosts();
+          });
       } else {
-        // Create mode
-        const newPost = {
-          id: Date.now().toString(),
-          title: title,
-          subtitle: subtitle,
-          author: author,
-          date: date,
-          publishDate: publishDate,
-          image: imagePath,
-          content: content
-        };
-        posts.push(newPost);
+        savePostLocally(postData);
+        showManager();
+        loadPosts();
       }
-      saveStoredPosts(posts);
-      showManager();
-      loadPosts();
     });
+
+    function savePostLocally(postData) {
+      const posts = getLocalStoragePosts();
+      const index = posts.findIndex(p => p.id === postData.id);
+      if (index !== -1) {
+        posts[index] = postData;
+      } else {
+        posts.push(postData);
+      }
+      localStorage.setItem('rimay_posts', JSON.stringify(posts));
+    }
 
     // --- IMAGE HANDLERS ---
     window.handleImageUpload = function(input) {
