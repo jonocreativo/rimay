@@ -1583,8 +1583,17 @@ footer {
   display: flex;
   justify-content: center;
   align-items: center;
-  color: rgba(253, 251, 247, 0.85);
+  color: #ffffff;
   font-size: 0.68rem;
+}
+
+.footer-bottom p,
+.footer-bottom p a {
+  color: #ffffff !important;
+}
+
+.footer-bottom p a:hover {
+  color: var(--accent-gold) !important;
 }
 
 @media (max-width: 992px) {
