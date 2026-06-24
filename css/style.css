@@ -379,6 +379,25 @@ header.scrolled .logo img {
   height: 14px;
 }
 
+.nav-admin-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 0;
+}
+
+.nav-admin-link svg {
+  width: 20px;
+  height: 20px;
+  stroke: currentColor;
+  display: block;
+  transition: var(--transition);
+}
+
+.nav-admin-link:hover svg {
+  transform: scale(1.15);
+}
+
 /* Hamburger */
 .hamburger {
   display: none;
