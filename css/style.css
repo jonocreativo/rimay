@@ -1231,104 +1231,149 @@ header.scrolled .logo img {
   height: 16px;
 }
 
-/* Reviews List */
-.reviews-container {
+/* Google Reviews Container (Grid) */
+.google-reviews-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+  font-family: 'Roboto', var(--font-body), sans-serif;
+  width: 100%;
+}
+
+/* La tarjeta: Al ser un enlace <a> quitamos el subrayado */
+.g-review-card {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-}
-
-.review-card {
-  background-color: var(--background-light);
-  padding: 24px;
+  background: #ffffff;
   border-radius: var(--border-radius-md);
-  box-shadow: var(--shadow-sm);
-  border: 1px solid rgba(44, 62, 45, 0.04);
+  padding: 20px;
+  text-decoration: none;
+  color: var(--text-main);
+  border: 1px solid var(--border-color);
   transition: var(--transition);
+  box-shadow: var(--shadow-sm);
 }
 
-.review-card:hover {
-  transform: translateX(3px);
+.g-review-card:hover {
+  transform: translateY(-4px);
   box-shadow: var(--shadow-md);
-  border-color: rgba(212, 175, 55, 0.15);
+  border-color: rgba(212, 175, 55, 0.2);
 }
 
-.review-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 14px;
-  gap: 12px;
-}
-
-.reviewer-info {
+/* Cabecera del usuario */
+.g-review-header {
   display: flex;
   align-items: center;
-  gap: 12px;
+  margin-bottom: 12px;
+  position: relative;
 }
 
-.reviewer-avatar {
+/* El círculo del avatar */
+.g-avatar {
   width: 40px;
   height: 40px;
-  min-width: 40px;
   border-radius: 50%;
-  background-color: var(--primary-dark);
-  color: var(--text-light);
+  color: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: var(--font-heading);
+  font-size: 16px;
+  font-weight: 600;
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+/* Nombre y cantidad de opiniones */
+.g-user-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.g-name {
   font-size: 0.9rem;
-  font-weight: bold;
-}
-
-.review-card:nth-child(2) .reviewer-avatar {
-  background-color: var(--accent-earth);
-}
-
-.review-card:nth-child(3) .reviewer-avatar {
-  background-color: var(--accent-gold);
+  font-weight: 600;
   color: var(--primary-dark);
+  line-height: 1.3;
 }
 
-.reviewer-name {
-  font-weight: 700;
-  font-size: 0.9rem;
-  color: var(--primary-dark);
-  margin-bottom: 1px;
-}
-
-.review-time {
-  font-size: 0.72rem;
+.g-stats {
+  font-size: 0.75rem;
   color: var(--text-muted);
+  margin-top: 2px;
 }
 
-.review-text {
-  font-size: 0.9rem;
-  color: var(--text-main);
-  line-height: 1.6;
-  margin-bottom: 0;
-  font-style: italic;
-  position: relative;
-  padding-left: 18px;
-}
-
-.review-text::before {
-  content: '\201C';
+/* Los 3 puntitos de Google */
+.g-dots {
   position: absolute;
-  left: 0;
-  top: -4px;
-  font-family: var(--font-heading);
-  font-size: 1.8rem;
-  color: var(--accent-gold);
+  right: 0;
+  top: 0;
+  font-size: 18px;
+  font-weight: bold;
+  color: var(--text-muted);
   line-height: 1;
-  opacity: 0.6;
+}
+
+/* Fila de estrellas y fecha */
+.g-rating-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.g-stars {
+  color: var(--accent-gold);
+  font-size: 14px;
+  letter-spacing: 1px;
+}
+
+.g-time {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-left: 8px;
+}
+
+/* Texto de la reseña */
+.g-text {
+  font-size: 0.88rem;
+  line-height: 1.5;
+  color: var(--text-main);
+  margin: 0;
+  word-wrap: break-word;
+  flex-grow: 1;
+}
+
+/* Galería de fotos (Espacio para las imágenes) */
+.g-review-photos {
+  margin-top: 14px;
+  display: grid;
+  gap: 6px;
+  border-radius: var(--border-radius-sm);
+  overflow: hidden;
+}
+
+/* Si hay 2 fotos, las divide a la mitad */
+.g-review-photos.col-2 {
+  grid-template-columns: 1fr 1fr;
+  height: 120px;
+}
+
+/* Si hay 1 foto, ocupa todo el ancho */
+.g-review-photos.col-1 {
+  grid-template-columns: 1fr;
+  height: 150px;
+}
+
+.g-review-photos img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background-color: var(--background-alt);
 }
 
 .resenas-cta {
   grid-column: 1 / -1;
   text-align: center;
-  margin-top: 16px;
+  margin-top: 24px;
 }
 
 @media (max-width: 992px) {
